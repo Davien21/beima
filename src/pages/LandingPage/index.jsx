@@ -139,7 +139,8 @@ function LandingPage(props) {
               <div className="mb-10">
                 <p className="text-gray-450 text-base md:text-lg">
                   Get in touch with the best choice for your pension plan,
-                  <br className="hidden lg:block" /> with the various super friendly services we offer.
+                  <br className="hidden lg:block" /> with the various super
+                  friendly services we offer.
                 </p>
               </div>
             </div>

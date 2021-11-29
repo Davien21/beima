@@ -1,0 +1,70 @@
+.container {
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.container > div {
+  position: relative;
+  top: 0;
+  background: radial-gradient(
+    94.22% 204.93% at 95.03% 7.47%,
+    rgba(1, 193, 231, 0.1) 26.56%,
+    rgba(154, 4, 233, 0.1) 90.98%
+  );
+  cursor: pointer;
+  border-radius: 22px;
+  height: 162px;
+  transition: 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.container > div::before {
+  content: "";
+  display: block;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.5);
+  width: 60px;
+  height: 100%;
+  top: 0;
+  filter: blur(30px);
+  transform: translateX(-250px) skewX(-15deg);
+}
+
+.container > div::after {
+  content: "";
+  display: block;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  width: 30px;
+  height: 100%;
+  top: 0;
+  filter: blur(5px);
+  transform: translateX(-250px) skewX(-15deg);
+}
+
+.container:hover > div::before,
+.container:hover > div::after {
+  transform: translateX(700px) skewX(-15deg);
+  transition: 1s;
+}
+
+.container:hover > div {
+  top: -10px;
+  transition: 0.2s ease-in-out;
+}
+
+.container p {
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.icon-container {
+}
+
+.icon-container img {
+  width: 50px;
+  height: 50px;
+}

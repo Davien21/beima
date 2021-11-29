@@ -1,3 +1,81 @@
 .container {
-  
+  /* background-color: white; */
+}
+.container .pageText {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 44px;
+  color: #FFFFFF;
+}
+
+.container h4 {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 29px;
+  color: #ffffff7e;
+}
+
+.viewArea {
+
+}
+
+.plannerCard {
+  background: #273250;
+  opacity: 0.5;
+  border-radius: 10px;
+}
+
+.dueCard {
+  min-height: 339px;
+  background: #273250;
+  border-radius: 24px;
+  font-family: Inter;
+  font-style: normal;
+  color: #FFFFFF;
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dueCard img {
+  position: absolute;
+  top: -15%;
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1160px) {
+  .dueCard img {
+    left: -10px;
+  }
+}
+
+.dueCard h5 {
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 119.7%;
+}
+
+.dueCard p {
+  font-size: 15px;
+  line-height: 119.7%;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dueCard p span {
+  font-size: 20px;
+}
+
+.dueCard button {
+  width: 104px;
+  height: 38px;
+  background: #FFFFFF;
+  border-radius: 11px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 119.7%;
+  color: #273250;
 }

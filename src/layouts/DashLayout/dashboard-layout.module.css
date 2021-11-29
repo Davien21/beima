@@ -2,3 +2,11 @@
   display: flex;
   background: #0c1228 !important;
 }
+.content-container {
+  width: calc(100%);
+}
+@media screen and (max-width: 767px) {
+  .content-container {
+    width: 100%;
+  }
+}

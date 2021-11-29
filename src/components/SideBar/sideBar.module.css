@@ -1,10 +1,29 @@
 .container {
-  width: 100%;
-  max-width: 140px;
-  padding: 2.5rem 0rem;
-  min-height: 100vh;
+  position: fixed;
+  left: -300px;
+  width: 270px;
+  max-width: 100%;
+  padding-bottom: 2.5rem;
+  height: 100vh;
   background-color: #0e1020;
-  border-radius: 0px 30px 30px 0px;
+  top: 0;
+  z-index: var(--sidebar-z-index);
+  box-shadow: 10px 16px 19px rgb(0 0 0 / 20%);
+  transition: 0.25s ease-in-out;
+}
+
+.container.active {
+  left: 0px;
+}
+
+@media screen and (min-width: 768px) {
+  .container {
+    border-radius: 0px 30px 30px 0px;
+    box-shadow: none;
+    position: sticky;
+    left: 0px;
+    width: 100%;
+  }
 }
 
 .logo {
@@ -13,35 +32,78 @@
 
 @media screen and (min-width: 768px) {
   .container {
-    max-width: 185px;
-    padding: 2.5rem 2rem;
+    max-width: 220px;
   }
 }
 
 @media screen and (min-width: 1280px) {
   .container {
     max-width: 250px;
+  }
+}
+
+.container > ul > li > a {
+  display: block;
+  width: 100%;
+  padding-right: 10px;
+}
+.container > ul > li > a > div {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.container > ul > li > a > div:hover {
+  background-color: #19223c;
+  border-radius: 0px 100px 100px 0px;
+  transition: 0.2s ease-in-out;
+}
+
+.container > ul > li > a > div * {
+  transition: 0.2s ease-in-out;
+}
+
+.container > ul > li > a > div svg rect:first-child {
+  fill: #2c293e;
+}
+
+.container > ul > li > a > div:hover svg rect:first-child {
+  fill: #7611f7;
+}
+
+.container .icon-container.active .icon rect:first-child {
+  fill: #7611f7;
+}
+
+.container .icon-container.active {
+  background-color: #19223c;
+  border-radius: 0px 100px 100px 0px;
+}
+
+/* @media screen and (min-width: 1280px) {
+  .container {
+    max-width: 187px;
     padding: 2.5rem 2rem;
   }
 }
 
 @media screen and (min-width: 1600px) {
   .container {
-    max-width: 300px;
+    max-width: 250px;
     padding: 2.5rem 3rem;
   }
-}
-
+} */
+/* 
 .container > ul {
-  margin-top: 50px;
   padding: 0px;
 }
 
-.container > ul > li {
-  display: flex;
-  justify-content: center;
-  text-align: center;
-}
+
 
 .container > ul li span {
   display: block;
@@ -51,10 +113,10 @@
   line-height: 18px;
   text-align: center;
   color: #7987a5;
-  margin: 10px 0px 0px 0px;
+  margin: 0px 0px 0px 20px;
 }
 
-.iconCon {
+.icon-container {
   background: #eceff7;
   border-radius: 10px;
   cursor: pointer;
@@ -62,7 +124,7 @@
   padding: 15px;
 }
 
-.iconCon.active {
+.icon-container.active {
   background: #eceff7;
   border-radius: 10px;
   cursor: pointer;
@@ -74,16 +136,16 @@
   padding: 5px 10px;
 }
 
-.container > ul > li a:hover .iconCon,
-.iconCon.active {
-  background: #022655;
+.container > ul > li a:hover .icon-container,
+.icon-container.active {
+  background: #7611f7;
   box-shadow: 0px 10px 20px rgba(88, 92, 229, 0.25);
   color: #1c295d;
-}
+} */
 
-.container > ul > li a:hover .iconCon .sideBarIcon > path,
-.container > ul > li a:hover .iconCon .sideBarIcon > rect,
-.iconCon.active .sideBarIcon > path,
-.iconCon.active .sideBarIcon > rect {
+/* .container > ul > li a:hover .icon-container .icon > path,
+.container > ul > li a:hover .icon-container .icon > rect,
+.icon-container.active .icon > path,
+.icon-container.active .icon > rect {
   fill: white;
-}
+} */

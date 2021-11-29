@@ -1,0 +1,1 @@
+export * as BeimaAbi from "./BeimaAbi.json";

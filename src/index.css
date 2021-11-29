@@ -6,6 +6,8 @@
 
 @import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,550);
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
+
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -26,8 +28,9 @@ body {
   --app-border-radius-md: 15px;
   --app-border-radius-lg: 30px;
   --header-z-index: 1000;
-  --overlay-z-index: 1500;
-  --modal-z-index: 1500;
+  --sidebar-z-index: 1500;
+  --overlay-z-index: 2000;
+  --modal-z-index: 2000;
 }
 
 * {

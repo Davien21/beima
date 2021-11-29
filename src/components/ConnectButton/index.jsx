@@ -5,7 +5,7 @@ import styles from "./connect-button.module.css";
 
 function ConnectButton() {
   const history = useHistory();
-  const { handleWalletConnect, hasMetaMask } = useAppContext();
+  const { handleWalletConnect, hasMetaMask, isConnected } = useAppContext();
 
   async function connect() {
     const connectionStatus = await handleWalletConnect();
@@ -29,7 +29,7 @@ function ConnectButton() {
       )}
       {hasMetaMask && (
         <Button onClick={connect} className="font-medium">
-          Connect Wallet
+          {isConnected ? "Open Dashboard" : "Connect Wallet"}
         </Button>
       )}
     </div>

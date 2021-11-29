@@ -1,0 +1,76 @@
+.container * {
+  font-family: Inter;
+  color: #ffffff;
+}
+
+.container svg {
+  width: 25px;
+  height: 25px;
+}
+
+.container p:first-child {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 140%;
+}
+
+.container p:nth-child(2) {
+  font-weight: bold;
+  font-size: 1.5rem;
+  line-height: 119.7%;
+  letter-spacing: 0px;
+}
+
+.card-totalBal {
+  height: 102px;
+  background: radial-gradient(
+      50% 50% at 50% 50%,
+      #eb5757 0%,
+      rgba(235, 87, 87, 0.67) 31.25%,
+      rgba(235, 87, 87, 0) 100%
+    ),
+    conic-gradient(
+      from 160deg at 50% 60%,
+      #5792eb 40deg,
+      #f24ae1 101deg,
+      #ff3535 133deg,
+      #febf1e 290deg,
+      #5792eb 360deg
+    );
+  /* background: radial-gradient(
+      50% 50% at 50% 50%,
+      #eb5757 0%,
+      rgba(235, 87, 87, 0.67) 31.25%,
+      rgba(235, 87, 87, 0) 100%
+    ),
+    conic-gradient(
+      from 360deg at 50% 50%,
+      #5792eb 0deg,
+      #f24ae1 90deg,
+      #ff3535 180deg,
+      #febf1e 270deg,
+      #5792eb 360deg
+    ); */
+  border-radius: 15px;
+}
+
+.card-outline {
+  height: 102px;
+  border: 2px solid #36415f;
+  border-radius: 15px;
+}
+
+@media screen and (min-width: 768px) {
+  .container svg {
+    width: 55px;
+    height: 55px;
+  }
+
+  /* .container h1 {
+    font-size: 14px;
+  }
+
+  .container p {
+    font-size: 11px;
+  } */
+}

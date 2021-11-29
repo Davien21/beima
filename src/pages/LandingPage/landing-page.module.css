@@ -123,19 +123,6 @@
   color: #fff;
 }
 
-.section_1 {
-  /* background: #0c1228; */
-  /* background: rgba(207, 13, 255, 0.3);
-filter: blur(300px);
-transform: rotate(89.93deg); */
-}
-
-@keyframes dash {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
 @media screen and (min-width: 1400px) {
   .logos {
     padding-left: 6rem;
