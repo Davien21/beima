@@ -13,7 +13,7 @@ export async function userIsRegistered() {
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && network !== "kovan") return false;
+    if (network && network !== "rinkeby") return false;
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();

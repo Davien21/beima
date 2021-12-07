@@ -7,10 +7,10 @@ import {
   hasEthereum,
   getBeimaContract,
   getCurrentNetwork,
-  getKovanUSDTContract,
+  getRinkebyUSDTContract,
   getActiveWallet,
   getWeb3BeimaContract,
-  getWeb3KovanUSDTContract,
+  getWeb3RinkebyUSDTContract,
 } from "./web3Service";
 
 // In Node.js use: const Web3 = require('web3');
@@ -29,28 +29,52 @@ export async function createFlexiblePlan(
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network.includes("kovan")) return false;
+    if (network && !network.includes("rinkeby")) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
+    const address = await getActiveWallet();
 
-    const beimaContract = await getBeimaContract(signer);
+
+    const beimaContract = await getWeb3BeimaContract();
+    console.log(beimaContract.address)
+    const RinkebyUSDTContract = await getWeb3RinkebyUSDTContract();
+    Emitter.emit('OPEN_LOADER');
+		const approve = await RinkebyUSDTContract.methods
+			// approving rinkeby usdt address
+			.approve('0xe06740C98F7C6d205eB85bA9586a04989806D335', 10000)
+			.send({ from: address })
+			.on('Approval', async () => {
+				toast.success('Approval was successful');
+				
+			});
+      Emitter.emit('CLOSE_LOADER');
     // console.log(monthlyDeposit, typeof monthlyDeposit);
     // monthlyDeposit = ethers.utils.parseEther(monthlyDeposit);
     // Emitter.emit("CLOSE_LOADER");
-    await beimaContract.setPlan(
+    console.log(beimaContract)
+    await beimaContract.methods.setPlan(
       coin,
       planIpfs,
       totalApprovedAmount,
       monthlyDeposit,
       timeDurationOfDeposit,
       lockTime
-    );
-
-    await beimaContract.on("Plan", () => {
+    ).send({from: address}).on("Plan", () => {
       onAddPlan();
       toast.success("A new Flexible Pension Plan was setup successfully");
-      Emitter.emit("CLOSE_LOADER");
+      // Emitter.emit("CLOSE_LOADER");
     });
+    Emitter.emit('CLOSE_LOADER');
+      
+				// console.log(asset);
+			console.log(RinkebyUSDTContract);
+
+
+    // await beimaContract.on("Plan", () => {
+    //   onAddPlan();
+    //   toast.success("A new Flexible Pension Plan was setup successfully");
+    //   Emitter.emit("CLOSE_LOADER");
+    // });
   } catch (err) {
     console.log("Something went wrong", err);
     let msg = "Something went wrong, please try again later.";
@@ -62,73 +86,58 @@ export async function createFlexiblePlan(
 }
 
 export async function depositAsset(coinAddress, amount) {
-  // Emitter.emit("OPEN_LOADER");
+  Emitter.emit("OPEN_LOADER");
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network.includes("kovan")) return false;
+    if (network && !network.includes("rinkeby")) return false;
     // const provider = new ethers.providers.Web3Provider(window.ethereum);
     // const signer = provider.getSigner();
-    const address = getActiveWallet();
-    const web3 = new Web3(Web3.givenProvider);
+    const address = await getActiveWallet();
+    console.log(address, typeof address)
 
-    // const KovanUSDTContract = await getKovanUSDTContract(signer);
-    const KovanUSDTContract = await getWeb3KovanUSDTContract();
-    // console.log(KovanUSDTContract);
-    const fromMyWallet = {
-      from: address,
-      gasLimit: web3.utils.toHex(6000000),
-      gasPrice: web3.utils.toHex(90000000000), // use ethgasstation.info (mainnet only)
-    };
-
-    const fromMyWallet2 = {
-      from: address,
-      gasLimit: web3.utils.toHex(500000),
-      gasPrice: web3.utils.toHex(90000000000), // use ethgasstation.info (mainnet only)
-    };
+    // const RinkebyUSDTContract = await getRinkebyUSDTContract(signer);
+    ;
 
     const beimaContract = await getWeb3BeimaContract();
     console.log(beimaContract);
     const beimaContractAddress = beimaContract._address;
-    const details = await beimaContract.methods
-      .pensionServiceApplicant(address)
-      .call();
-    console.log(details);
-    // console.log(beimaContractAddress);
-    let monthlyDeposit = details.client.amountToSpend;
-    // monthlyDeposit = ethers.utils.parseEther(monthlyDeposit);
-    const asset = "0xb7a4F3E9097C08dA09517b5aB877F7a917224ede";
-    // console.log(asset);
-    console.log(KovanUSDTContract);
-    const approve = await KovanUSDTContract.methods
-      .approve(beimaContractAddress, monthlyDeposit)
-      .send(fromMyWallet2);
+    const asset = '0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02';
 
-    console.log({ approve });
-    let options = {
-      filter: {
-        value: [],
-      },
-      fromBlock: 0,
-    };
-    let b = KovanUSDTContract.events
-      .Approval(options)
-      .on("data", async (event) => {
-        console.log({ event });
-        b.unsubscribe();
-      });
-    setTimeout(async() => {
-      let bye = await beimaContract.methods
-        .deposit(asset, monthlyDeposit)
-        .send(fromMyWallet);
-      console.log({ bye });
-      beimaContract.events.Deposit(options).on("data", (event) => {
-        console.log(event);
-        bye.unsubscribe();
-      });
-    }, 15000);
+    
+    const deposit = await beimaContract.methods
+			.depositToken(asset, 10)
+			.send({ from: address })
+			.on('Deposit', () => {
+				toast.success('Deposit was successful');
+				Emitter.emit('CLOSE_LOADER');
+			});
 
-    // await KovanUSDTContract.on("Approval", async (owner, spender, value) => {
+    // console.log({ approve });
+    // let options = {
+    //   filter: {
+    //     value: [],
+    //   },
+    //   fromBlock: 0,
+    // };
+    // let b = RinkebyUSDTContract.events
+    //   .Approval(options)
+    //   .on("data", async (event) => {
+    //     console.log({ event });
+    //     b.unsubscribe();
+    //   });
+    // setTimeout(async() => {
+    //   let bye = await beimaContract.methods
+    //     .deposit(asset, 1)
+    //     .send({from: address});
+    //   console.log({ bye });
+    //   beimaContract.events.Deposit(options).on("data", (event) => {
+    //     console.log(event);
+    //     bye.unsubscribe();
+    //   });
+    // }, 15000);
+
+    // await RinkebyUSDTContract.on("Approval", async (owner, spender, value) => {
     //   console.log({ owner, spender, value });
     //   toast.success("Approved!");
     // });
@@ -153,7 +162,7 @@ export async function genAddresses() {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
     console.log(window.BinanceChain);
-    // if (network && !network.includes("kovan")) return false;
+    // if (network && !network.includes("Rinkeby")) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const wallet = ethers.Wallet.createRandom();

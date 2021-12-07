@@ -1,8 +1,8 @@
 import Web3 from "web3";
 
 import { ethers } from "ethers";
-import { BeimaAbi, KovanUSDTAbi } from "../contracts/abis";
-import { BeimaContractAddress, KovanUSDTContractAddress } from "../utils";
+import { BeimaAbi, RinkebyUSDTAbi } from "../contracts/abis";
+import { BeimaContractAddress, RinkebyUSDTContractAddress } from "../utils";
 
 export const connectToMetaMask = async (setError) => {
   try {
@@ -87,22 +87,22 @@ export async function getWeb3BeimaContract() {
   }
 }
 
-export async function getKovanUSDTContract(signer) {
+export async function getRinkebyUSDTContract(signer) {
   try {
     if (!hasEthereum()) return false;
 
-    return new ethers.Contract(KovanUSDTContractAddress, KovanUSDTAbi, signer);
+    return new ethers.Contract(RinkebyUSDTContractAddress, RinkebyUSDTAbi, signer);
   } catch (err) {
     console.log("failed to load contract", err);
   }
 }
 
-export async function getWeb3KovanUSDTContract() {
+export async function getWeb3RinkebyUSDTContract() {
   try {
     if (!hasEthereum()) return false;
     const web3 = new Web3(Web3.givenProvider)
 
-    return new web3.eth.Contract(KovanUSDTAbi, KovanUSDTContractAddress)
+    return new web3.eth.Contract(RinkebyUSDTAbi, RinkebyUSDTContractAddress)
   } catch (err) {
     console.log("failed to load contract", err);
   }

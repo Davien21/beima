@@ -30,8 +30,8 @@ export function DashboardProvider({ children }) {
   useEffect(() => {
     (async () => {
       const network = await getCurrentNetwork();
-      if (network && network !== "kovan") {
-        return toast.error("Please Switch to the Kovan Test Network");
+      if (network && network !== "rinkeby") {
+        return toast.error("Please Switch to the Rinkeby Test Network");
       }
       // genAddresses()
       const beima = await getBeimaContract();
