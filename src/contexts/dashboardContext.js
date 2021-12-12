@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { getUserDetails, userIsRegistered } from "../services/userService";
 import { getCurrentNetwork } from "../services/web3Service";
 import toast from "../utils/toastConfig";
@@ -20,17 +26,23 @@ export function DashboardProvider({ children }) {
   const [coins] = useState(coinAssets);
   const [isRegistered, setIsRegistered] = useState(true);
 
-  const addNewPensionPlan = (plan) => {
-    if (pensions.length) return setPensions([{ ...plan }, ...pensions]);
-    setPensions([{ ...plan }]);
-  };
+  const addNewPensionPlan = useCallback(
+    (plan) => {
+      if (pensions.length) return setPensions([{ ...plan }, ...pensions]);
+      setPensions([{ ...plan }]);
+    },
+    [pensions]
+  );
 
-  const updatePensionPlan = (id, newState) => {
-    const currentPensionState = [...pensions];
-    currentPensionState.splice(id - 1, 1, newState);
-    setPensions(currentPensionState);
-  };
-
+  const updatePensionPlan = useCallback(
+    (id, newState) => {
+      const currentPensionState = [...pensions];
+      currentPensionState.splice(id - 1, 1, newState);
+      setPensions(currentPensionState);
+    },
+    [pensions]
+  );
+ 
   useEffect(() => {
     (async () => {
       const network = await getCurrentNetwork();

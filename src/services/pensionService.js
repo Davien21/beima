@@ -1,4 +1,4 @@
-import { parseEther, formatEther } from "@ethersproject/units";
+import { parseEther } from "@ethersproject/units";
 import { ethers } from "ethers";
 import { formatMoney } from "../utils";
 import toast from "../utils/toastConfig";
@@ -20,27 +20,27 @@ export async function createFlexiblePlan(
   onAddPlan,
   onError
 ) {
-  Emitter?.emit("OPEN_LOADER");
+  Emitter.emit("OPEN_LOADER");
   const timeDurationOfDeposit = lockTime;
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network?.includes("rinkeby")) return false;
-    const provider = new ethers.providers.Web3Provider(window?.ethereum);
-    const signer = provider?.getSigner();
+    if (network && !network.includes("rinkeby")) return false;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
 
     const beimaContract = await getBeimaContract(signer);
 
     const RinkebyUSDTContract = await getRinkebyUSDTContract(signer);
-    await RinkebyUSDTContract?.approve(
-      beimaContract?.address,
-      parseEther(totalApprovedAmount)?.toString()
+    await RinkebyUSDTContract.approve(
+      beimaContract.address,
+      parseEther(totalApprovedAmount).toString()
     );
-    await RinkebyUSDTContract?.on("Approval", () => {
-      toast?.success("Approval was successful");
+    await RinkebyUSDTContract.on("Approval", () => {
+      toast.success("Approval was successful");
     });
 
-    await beimaContract?.setPlan(
+    await beimaContract.setPlan(
       coin,
       planIpfs,
       totalApprovedAmount,
@@ -49,135 +49,135 @@ export async function createFlexiblePlan(
       lockTime
     );
 
-    await beimaContract?.on("Plan", () => {
+    await beimaContract.on("Plan", () => {
       onAddPlan();
-      toast?.success("A new Flexible Pension Plan was setup successfully");
-      Emitter?.emit("CLOSE_LOADER");
+      toast.success("A new Flexible Pension Plan was setup successfully");
+      Emitter.emit("CLOSE_LOADER");
     });
   } catch (err) {
-    console?.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later?.";
-    if (err?.code === 4001) msg = "This transaction was denied by you";
-    Emitter?.emit("CLOSE_LOADER");
-    toast?.error(msg);
+    console.log("Something went wrong", err);
+    let msg = "Something went wrong, please try again later.";
+    if (err.code === 4001) msg = "This transaction was denied by you";
+    Emitter.emit("CLOSE_LOADER");
+    toast.error(msg);
     onError();
   }
 }
 
 export async function depositAsset(onSuccess) {
-  Emitter?.emit("OPEN_LOADER");
+  Emitter.emit("OPEN_LOADER");
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network?.includes("rinkeby")) return false;
-    const provider = new ethers.providers.Web3Provider(window?.ethereum);
-    const signer = provider?.getSigner();
+    if (network && !network.includes("rinkeby")) return false;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
     const address = await getActiveWallet();
 
     const beimaContract = await getBeimaContract(signer);
-    const details = await beimaContract?.pensionServiceApplicant(address);
+    const details = await beimaContract.pensionServiceApplicant(address);
 
-    let monthlyDeposit = details?.client?.amountToSpend?.toString();
-    const cAsset = details?.client?.underlyingAsset;
-    const asset = await beimaContract?.getAssetAddress(cAsset);
+    let monthlyDepositInWei = parseEther(
+      details.client.amountToSpend.toString()
+    ).toString();
+    const cAsset = details.client.underlyingAsset;
+    const asset = await beimaContract.getAssetAddress(cAsset);
+    // console.log(monthlyDepositInWei);
+    await beimaContract.depositToken(asset, monthlyDepositInWei);
 
-    await beimaContract?.depositToken(
-      asset,
-      parseEther(monthlyDeposit)?.toString()
-    );
-
-    await beimaContract?.on("Deposit", () => {
-      toast?.success("Deposit was successful");
-      Emitter?.emit("CLOSE_LOADER");
-      onSuccess(monthlyDeposit);
+    await beimaContract.on("Deposit", () => {
+      onSuccess();
+      toast.success("Deposit was successful");
+      Emitter.emit("CLOSE_LOADER");
     });
   } catch (err) {
-    console?.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later?.";
-    if (err?.code === 4001) msg = "This transaction was denied by you";
-    if (err?.code === -32016)
+    console.log("Something went wrong", err);
+    let msg = "Something went wrong, please try again later.";
+    if (err.code === 4001) msg = "This transaction was denied by you";
+    if (err.code === -32016)
       msg = "You don't have enough funds to complete this transaction";
-    Emitter?.emit("CLOSE_LOADER");
-    toast?.error(msg);
+    Emitter.emit("CLOSE_LOADER");
+    toast.error(msg);
   }
 }
 
-export async function supplyAssets(onSuccess) {
-  Emitter?.emit("OPEN_LOADER");
+export async function supplyAssets(totalUnsuppliedAmount, onSuccess) {
+  Emitter.emit("OPEN_LOADER");
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network?.includes("rinkeby")) return false;
-    const provider = new ethers.providers.Web3Provider(window?.ethereum);
-    const signer = provider?.getSigner();
+    if (network && !network.includes("rinkeby")) return false;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
     const address = await getActiveWallet();
 
     const beimaContract = await getBeimaContract(signer);
-    const details = await beimaContract?.pensionServiceApplicant(address);
-    const totalUnsuppliedAmount = (
-      await beimaContract?.amountSupplied(address)
-    )?.toString();
+    const details = await beimaContract.pensionServiceApplicant(address);
 
-    const cAsset = details?.client?.underlyingAsset;
+    const cAsset = details.client.underlyingAsset;
 
-    await beimaContract?.supply(cAsset);
+    await beimaContract.supply(cAsset);
 
-    await beimaContract?.on("Supply", () => {
-      const formattedTotal = formatEther(totalUnsuppliedAmount);
-      toast?.success(
-        `You have successfully staked ${formatMoney(formattedTotal)}`
+    await beimaContract.on("Supply", () => {
+      toast.success(
+        `You have successfully staked ${formatMoney(totalUnsuppliedAmount)}`
       );
       onSuccess();
-      Emitter?.emit("CLOSE_LOADER");
-      onSuccess(formattedTotal);
+      Emitter.emit("CLOSE_LOADER");
+      onSuccess();
     });
   } catch (err) {
-    console?.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later?.";
-    if (err?.code === 4001) msg = "This transaction was denied by you";
-    if (err?.code === -32016)
+    console.log("Something went wrong", err);
+    let msg = "Something went wrong, please try again later.";
+    if (err.code === 4001) msg = "This transaction was denied by you";
+    if (err.code === -32016)
       msg = "You don't have enough funds to complete this transaction";
-    Emitter?.emit("CLOSE_LOADER");
-    toast?.error(msg);
+    Emitter.emit("CLOSE_LOADER");
+    toast.error(msg);
   }
 }
 
 export async function withdrawAssets(deposit, onSuccess) {
-  Emitter?.emit("OPEN_LOADER");
+  Emitter.emit("OPEN_LOADER");
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network?.includes("rinkeby")) return false;
-    const provider = new ethers.providers.Web3Provider(window?.ethereum);
-    const signer = provider?.getSigner();
+    if (network && !network.includes("rinkeby")) return false;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
     const address = await getActiveWallet();
 
     const beimaContract = await getBeimaContract(signer);
-    const details = await beimaContract?.pensionServiceApplicant(address);
+    const details = await beimaContract.pensionServiceApplicant(address);
 
-    const cAsset = details?.client?.underlyingAsset;
+    const cAsset = details.client.underlyingAsset;
 
-    const asset = await beimaContract?.getAssetAddress(cAsset);
-    const depositInWei = parseEther(deposit)?.toString();
-    await beimaContract?.redeemCErc20Tokens(depositInWei, cAsset);
+    const asset = await beimaContract.getAssetAddress(cAsset);
+    const depositInWei = parseEther(deposit.toString()).toString();
+    // console.log(depositInWei);
+    await beimaContract.redeemCErc20Tokens(depositInWei, cAsset);
 
-    await beimaContract?.on("MyLog", async () => {
-      await beimaContract?.withdrawToken(asset, depositInWei);
-      toast?.success(`Funds successfully redeemed, proceeding to withdraw?.?.?.`);
+    await beimaContract.on("MyLog", async () => {
+      toast.success(`Funds successfully redeemed, proceeding to withdraw...`);
+      try {
+        await beimaContract.withdrawToken(asset, depositInWei);
+      } catch (error) {
+        console.log("Something went wrong", error);
+      }
     });
 
-    await beimaContract?.on("Withdraw", () => {
-      toast?.success(`You have successfully withdrawn ${formatMoney(deposit)}`);
-      Emitter?.emit("CLOSE_LOADER");
+    await beimaContract.on("Withdraw", () => {
+      toast.success(`You have successfully withdrawn ${formatMoney(deposit)}`);
+      Emitter.emit("CLOSE_LOADER");
       onSuccess();
     });
   } catch (err) {
-    console?.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later?.";
-    if (err?.code === 4001) msg = "This transaction was denied by you";
-    if (err?.code === -32016)
+    console.log("Something went wrong", err);
+    let msg = "Something went wrong, please try again later.";
+    if (err.code === 4001) msg = "This transaction was denied by you";
+    if (err.code === -32016)
       msg = "You don't have enough funds to complete this transaction";
-    Emitter?.emit("CLOSE_LOADER");
-    toast?.error(msg);
+    Emitter.emit("CLOSE_LOADER");
+    toast.error(msg);
   }
 }

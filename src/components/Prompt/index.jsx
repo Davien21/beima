@@ -11,15 +11,6 @@ function Prompt({ isActive, setIsActive, onWithdraw }) {
   };
 
   useEffect(() => {
-    // Emitter.on("OPEN_LOADER", () => setIsActive(true));
-    // Emitter.on("CLOSE_LOADER", () => setIsActive(false));
-    // return () => {
-    //   Emitter.off("OPEN_LOADER", () => setIsActive(false));
-    //   Emitter.off("CLOSE_LOADER", () => setIsActive(false));
-    // };
-  });
-
-  useEffect(() => {
     document.body.style.overflow = isActive ? "hidden" : "auto";
     if (!isActive) document.body.style.overflow = "auto";
     return () => {
@@ -43,7 +34,7 @@ function Prompt({ isActive, setIsActive, onWithdraw }) {
           <span className="font-med-bold mx-1">20%</span>
           <span> penalty</span>
         </div>
-        <div className={`${styles["special-btns"]} grid grid-cols-2 gap-x-5 `}>
+        <div className={`${styles["special-btns"]} grid grid-cols-2 gap-x-5 gap-y-4 `}>
           <Button
             className="col-span-2 sm:col-span-1"
             text="Yes"

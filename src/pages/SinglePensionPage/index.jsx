@@ -22,19 +22,19 @@ const getInterest = (interest) => {
 
 function SinglePensionPage(props) {
   const [activePrompt, setActivePrompt] = useState(false);
-  // const history = useHistory();
   const { pensions, updatePensionPlan } = useDashboardContext();
   const { id } = useParams();
   const details = pensions?.[id - 1];
 
   const handleDeposit = () => {
     (async () => {
-      const onSuccess = (amount) => {
+      const onSuccess = () => {
         const currentState = { ...details };
         currentState.totalDeposit =
-          parseInt(currentState.totalDeposit) + parseInt(amount);
+          currentState.totalDeposit + currentState.monthlyDeposit;
         currentState.totalUnsuppliedAmount = currentState.totalDeposit;
         updatePensionPlan(id, currentState);
+        // console.log(details, currentState);
       };
       await depositAsset(onSuccess);
     })();
@@ -47,7 +47,7 @@ function SinglePensionPage(props) {
         currentState.totalUnsuppliedAmount = 0;
         updatePensionPlan(id, currentState);
       };
-      await supplyAssets(onSuccess);
+      await supplyAssets(details.totalUnsuppliedAmount, onSuccess);
     })();
   };
 
@@ -58,6 +58,7 @@ function SinglePensionPage(props) {
         const currentState = { ...details };
         currentState.totalUnsuppliedAmount = 0;
         currentState.totalDeposit = 0;
+        console.log(currentState);
         updatePensionPlan(id, currentState);
         setActivePrompt(false);
       };
@@ -65,7 +66,6 @@ function SinglePensionPage(props) {
     })();
   };
 
-  // if (!details) history.push("/dashboard/pensions");
   return (
     <main className={`${styles["container"]} container pb-20`}>
       <Prompt

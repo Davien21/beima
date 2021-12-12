@@ -65,13 +65,16 @@ export async function getUserDetails() {
     const address = getActiveWallet();
 
     const details = await beimaContract?.pensionServiceApplicant(address);
-    const totalUnsuppliedAmount = formatEther(
-      (await beimaContract?.amountSupplied(address)).toString()
+    const monthlyDeposit = parseInt(details.client.amountToSpend.toString());
+    const totalUnsuppliedAmount = parseInt(
+      formatEther((await beimaContract?.amountSupplied(address)).toString())
     );
-    const assetDetails = formatEther(
-      (
-        await beimaContract?.assets(RinkebyUSDTContractAddress, address)
-      ).toString()
+    const totalDeposit = parseInt(
+      formatEther(
+        (
+          await beimaContract?.assets(RinkebyUSDTContractAddress, address)
+        ).toString()
+      )
     );
 
     const hasPlan = details.client.hasPlan;
@@ -84,9 +87,6 @@ export async function getUserDetails() {
     const pensionInfo = await fetch(
       `https://ipfs.io/ipfs/${details.client.ipfsHashOfUserPensionDetails}`
     ).then((r) => r.json());
-
-    const monthlyDeposit = details.client.amountToSpend.toString();
-    const totalDeposit = assetDetails;
 
     const pension = {
       ...pensionInfo,
