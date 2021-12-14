@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { BeimaAbi } from "../contracts/abis";
 import { BeimaContractAddress, RinkebyUSDTContractAddress } from "../utils";
+import toast from "../utils/toastConfig";
 
 export const connectToMetaMask = async (setError) => {
   try {
@@ -44,7 +45,22 @@ export function listenToAccountChanges(handler) {
   });
 }
 
+export function listenToNetworkChanges(handler) {
+  if (!hasEthereum()) return false;
+
+  window.ethereum.on("chainChanged", async () => {
+    const network = await getCurrentNetwork();
+    if (network && network !== "rinkeby") {
+      return toast.error("Please Switch to the Rinkeby Test Network");
+    } else {
+      toast.success("You successfully switched to the Rinkeby Test Network");
+      // handler(network);
+    }
+  });
+}
+
 export async function unmountEthListeners() {
+  window.ethereum.removeListener("chainChanged", () => {});
   window.ethereum.removeListener("accountsChanged", () => {});
   window.ethereum.removeListener("message", () => {});
 }

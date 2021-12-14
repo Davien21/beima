@@ -1,3 +1,5 @@
+import Emitter from "../services/emitter";
+
 import {
   createContext,
   useCallback,
@@ -8,6 +10,7 @@ import {
 import { getUserDetails, userIsRegistered } from "../services/userService";
 import { getCurrentNetwork } from "../services/web3Service";
 import toast from "../utils/toastConfig";
+import { useAppContext } from "./appContext";
 
 const DashboardContext = createContext();
 
@@ -20,6 +23,7 @@ const coinAssets = [
 ];
 
 export function DashboardProvider({ children }) {
+  const { shouldResetApp, setShouldResetApp } = useAppContext();
   const [pensions, setPensions] = useState([]);
   const [user, setUser] = useState(null);
   const [hasPlan, setHasPlan] = useState(false);
@@ -42,9 +46,10 @@ export function DashboardProvider({ children }) {
     },
     [pensions]
   );
- 
-  useEffect(() => {
+
+  const loadApp = () =>
     (async () => {
+      Emitter.emit("OPEN_LOADER");
       const network = await getCurrentNetwork();
       if (network && network !== "rinkeby") {
         return toast.error("Please Switch to the Rinkeby Test Network");
@@ -56,9 +61,17 @@ export function DashboardProvider({ children }) {
       setUser(user);
       if (pension) setPensions([{ ...pension }]);
       setIsRegistered(registerStatus);
+      Emitter.emit("CLOSE_LOADER");
       // console.log(beima);
     })();
-  }, [setIsRegistered]);
+
+  useEffect(() => {
+    loadApp();
+    if (shouldResetApp) {
+      setShouldResetApp(false);
+      loadApp();
+    }
+  }, [setIsRegistered, shouldResetApp, setShouldResetApp]);
 
   return (
     <DashboardContext.Provider

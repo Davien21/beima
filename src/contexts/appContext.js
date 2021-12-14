@@ -12,6 +12,7 @@ import {
   listenToAccountChanges,
   hasEthereum,
   unmountEthListeners,
+  listenToNetworkChanges,
 } from "../services/web3Service";
 
 import { useHistory } from "react-router-dom";
@@ -23,14 +24,12 @@ export function AppProvider({ children }) {
   const [isInitiallyFetched, setIsInitiallyFetched] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [hasMetaMask, setHasMetaMask] = useState(true);
+  const [shouldResetApp, setShouldResetApp] = useState(false);
 
   const handleWalletConnect = useCallback(() => {
     return (async () => {
       const connectionStatus = await connectToMetaMask();
       if (!connectionStatus) return false;
-
-      // const address = getActiveWallet();
-      // console.log(address);
 
       setIsConnected(true);
 
@@ -42,13 +41,11 @@ export function AppProvider({ children }) {
 
   const resetValues = useCallback(() => {
     return (async () => {
-      const address = getActiveWallet();
-      console.log(address);
-
       setIsConnected(true);
 
       localStorage.setItem("wallet-connection", true);
 
+      setShouldResetApp(true);
       return true;
     })();
   }, []);
@@ -64,12 +61,17 @@ export function AppProvider({ children }) {
     resetValues();
   };
 
+  const handleNetworkChanged = () => {
+    // if (!address) return handleWalletDisconnect();
+    resetValues();
+  };
+
   useEffect(() => {
     if (!isInitiallyFetched) return;
 
     if (!hasEthereum()) return;
     listenToAccountChanges(handleAccountChanged);
-
+    listenToNetworkChanges(handleNetworkChanged);
     return unmountEthListeners();
   });
 
@@ -95,6 +97,8 @@ export function AppProvider({ children }) {
         handleWalletConnect,
         handleWalletDisconnect,
         hasMetaMask,
+        shouldResetApp,
+        setShouldResetApp,
       }}
     >
       {children}
