@@ -1,7 +1,7 @@
 /** @format */
 import { formatEther } from "@ethersproject/units";
 import { ethers } from "ethers";
-import { RinkebyUSDTContractAddress } from "../utils";
+import { BscBUSDContractAddress } from "../utils";
 import toast from "../utils/toastConfig";
 import Emitter from "./emitter";
 import {
@@ -15,7 +15,7 @@ export async function userIsRegistered() {
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && network !== "rinkeby") return false;
+    if (network && network !== "bnbt") return false;
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -23,7 +23,7 @@ export async function userIsRegistered() {
     const beimaContract = await getBeimaContract(signer);
     const address = getActiveWallet();
 
-    return await beimaContract?.isRegistered(address);
+    return await beimaContract.isRegistered(address);
   } catch (err) {
     console.log("Something went wrong", err);
   }
@@ -36,9 +36,9 @@ export async function registerUser(userIpfs, onRegister) {
     const signer = provider.getSigner();
 
     const beimaContract = await getBeimaContract(signer);
-    await beimaContract?.register(userIpfs);
+    await beimaContract.register(userIpfs);
 
-    await beimaContract?.on("Register", () => {
+    await beimaContract.on("Register", () => {
       onRegister();
       Emitter.emit("CLOSE_LOADER");
       toast.success("Registration was successful");
@@ -64,15 +64,15 @@ export async function getUserDetails() {
     const beimaContract = await getBeimaContract(signer);
     const address = getActiveWallet();
 
-    const details = await beimaContract?.pensionServiceApplicant(address);
+    const details = await beimaContract.pensionServiceApplicant(address);
     const monthlyDeposit = parseInt(details.client.amountToSpend.toString());
     const totalUnsuppliedAmount = parseInt(
-      formatEther((await beimaContract?.amountSupplied(address)).toString())
+      formatEther((await beimaContract.amountSupplied(address)).toString())
     );
     const totalDeposit = parseInt(
       formatEther(
         (
-          await beimaContract?.assets(RinkebyUSDTContractAddress, address)
+          await beimaContract.assets(BscBUSDContractAddress, address)
         ).toString()
       )
     );

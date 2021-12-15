@@ -56,7 +56,7 @@ function FlexiblePlanForm({ isOpen, onClose }) {
       interest: { currency: "XEND", amount: "0" },
       dateCreated: today,
     };
-    const coin = coins.find((coin) => coin.name === "cUSDT").address;
+    const coin = coins.find((coin) => coin.name === "BUSD").address;
     (async () => {
       const planIpfsHash = await ipfsMini.addJSON({ ...plan });
 

@@ -7,7 +7,7 @@ import {
   hasEthereum,
   getBeimaContract,
   getCurrentNetwork,
-  getRinkebyUSDTContract,
+  getBscBUSDContract,
   getActiveWallet,
 } from "./web3Service";
 
@@ -25,18 +25,18 @@ export async function createFlexiblePlan(
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network.includes("rinkeby")) return false;
+    if (network && !network.includes("bnbt")) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
     const beimaContract = await getBeimaContract(signer);
 
-    const RinkebyUSDTContract = await getRinkebyUSDTContract(signer);
-    await RinkebyUSDTContract.approve(
+    const BscBUSDContract = await getBscBUSDContract(signer);
+    await BscBUSDContract.approve(
       beimaContract.address,
       parseEther(totalApprovedAmount).toString()
     );
-    await RinkebyUSDTContract.on("Approval", () => {
+    await BscBUSDContract.on("Approval", () => {
       toast.success("Approval was successful");
     });
 
@@ -69,7 +69,7 @@ export async function depositAsset(onSuccess) {
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network.includes("rinkeby")) return false;
+    if (network && !network.includes("bnbt")) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await getActiveWallet();
@@ -80,10 +80,10 @@ export async function depositAsset(onSuccess) {
     let monthlyDepositInWei = parseEther(
       details.client.amountToSpend.toString()
     ).toString();
-    const cAsset = details.client.underlyingAsset;
-    const asset = await beimaContract.getAssetAddress(cAsset);
-    // console.log(monthlyDepositInWei);
-    await beimaContract.depositToken(asset, monthlyDepositInWei);
+    const asset = details.client.underlyingAsset;
+    console.log({ asset });
+    console.log(typeof monthlyDepositInWei);
+    await beimaContract.depositToken(asset, 1);
 
     await beimaContract.on("Deposit", () => {
       onSuccess();
@@ -106,7 +106,7 @@ export async function supplyAssets(totalUnsuppliedAmount, onSuccess) {
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network.includes("rinkeby")) return false;
+    if (network && !network.includes("bnbt")) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await getActiveWallet();
@@ -114,9 +114,11 @@ export async function supplyAssets(totalUnsuppliedAmount, onSuccess) {
     const beimaContract = await getBeimaContract(signer);
     const details = await beimaContract.pensionServiceApplicant(address);
 
-    const cAsset = details.client.underlyingAsset;
+    let monthlyDepositInWei = parseEther(
+      details.client.amountToSpend.toString()
+    ).toString();
 
-    await beimaContract.supply(cAsset);
+    await beimaContract.depositToXendFinance(monthlyDepositInWei);
 
     await beimaContract.on("Supply", () => {
       toast.success(
@@ -142,35 +144,33 @@ export async function withdrawAssets(deposit, onSuccess) {
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network.includes("rinkeby")) return false;
+    if (network && !network.includes("bnbt")) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await getActiveWallet();
 
     const beimaContract = await getBeimaContract(signer);
     const details = await beimaContract.pensionServiceApplicant(address);
+    console.log(details);
+    // const asset = details.client.underlyingAsset;
+    // const depositInWei = parseEther(deposit.toString()).toString();
+    // // console.log(depositInWei);
+    // await beimaContract.withdrawFromXendFinance(asset);
 
-    const cAsset = details.client.underlyingAsset;
+    // await beimaContract.on("MyLog", async () => {
+    //   toast.success(`Funds successfully redeemed, proceeding to withdraw...`);
+    //   try {
+    //     await beimaContract.withdrawToken(asset, depositInWei);
+    //   } catch (error) {
+    //     console.log("Something went wrong", error);
+    //   }
+    // });
 
-    const asset = await beimaContract.getAssetAddress(cAsset);
-    const depositInWei = parseEther(deposit.toString()).toString();
-    // console.log(depositInWei);
-    await beimaContract.redeemCErc20Tokens(depositInWei, cAsset);
-
-    await beimaContract.on("MyLog", async () => {
-      toast.success(`Funds successfully redeemed, proceeding to withdraw...`);
-      try {
-        await beimaContract.withdrawToken(asset, depositInWei);
-      } catch (error) {
-        console.log("Something went wrong", error);
-      }
-    });
-
-    await beimaContract.on("Withdraw", () => {
-      toast.success(`You have successfully withdrawn ${formatMoney(deposit)}`);
-      Emitter.emit("CLOSE_LOADER");
-      onSuccess();
-    });
+    // await beimaContract.on("Withdraw", () => {
+    //   toast.success(`You have successfully withdrawn ${formatMoney(deposit)}`);
+    //   Emitter.emit("CLOSE_LOADER");
+    //   onSuccess();
+    // });
   } catch (err) {
     console.log("Something went wrong", err);
     let msg = "Something went wrong, please try again later.";

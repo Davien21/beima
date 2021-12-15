@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { BeimaAbi } from "../contracts/abis";
-import { BeimaContractAddress, RinkebyUSDTContractAddress } from "../utils";
+import { BeimaContractAddress, BscBUSDContractAddress } from "../utils";
 import toast from "../utils/toastConfig";
 
 export const connectToMetaMask = async (setError) => {
@@ -50,10 +50,12 @@ export function listenToNetworkChanges(handler) {
 
   window.ethereum.on("chainChanged", async () => {
     const network = await getCurrentNetwork();
-    if (network && network !== "rinkeby") {
-      return toast.error("Please Switch to the Rinkeby Test Network");
+    if (network && network !== "bnbt") {
+      return toast.error("Please Switch to the Binance Smart Chain TestNet");
     } else {
-      toast.success("You successfully switched to the Rinkeby Test Network");
+      toast.success(
+        "You successfully switched to the Binance Smart Chain TestNet"
+      );
       // handler(network);
     }
   });
@@ -75,17 +77,13 @@ export async function getBeimaContract(signer) {
   }
 }
 
-export async function getRinkebyUSDTContract(signer) {
+export async function getBscBUSDContract(signer) {
   try {
     if (!hasEthereum()) return false;
     const USDTAbi = await fetch(
-      "https://api-rinkeby.etherscan.io/api?module=contract&action=getabi&address=0xE2F373f64f7b60a82a4aC1aF1543f9e9eBa38fE1"
+      "https://api.bscscan.com/api?module=contract&action=getabi&address=0xe9e7cea3dedca5984780bafc599bd69add087d56"
     ).then((r) => r.json());
-    return new ethers.Contract(
-      RinkebyUSDTContractAddress,
-      USDTAbi.result,
-      signer
-    );
+    return new ethers.Contract(BscBUSDContractAddress, USDTAbi.result, signer);
   } catch (err) {
     console.log("failed to load contract", err);
   }

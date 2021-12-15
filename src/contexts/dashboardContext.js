@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { getUserDetails, userIsRegistered } from "../services/userService";
-import { getCurrentNetwork } from "../services/web3Service";
+import { getBeimaContract, getCurrentNetwork } from "../services/web3Service";
 import toast from "../utils/toastConfig";
 import { useAppContext } from "./appContext";
 
@@ -17,9 +17,8 @@ const DashboardContext = createContext();
 const coinAssets = [
   { name: "cUSDT", address: "0x2fB298BDbeF468638AD6653FF8376575ea41e768" },
   { name: "USDT", address: "0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02" },
+  { name: "BUSD", address: "0x3b1F033dD955f3BE8649Cc9825A2e3E194765a3F" },
   { name: "USDC", address: "0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b" },
-  { name: "ETH", address: "" },
-  { name: "TUSD", address: "" },
 ];
 
 export function DashboardProvider({ children }) {
@@ -51,10 +50,10 @@ export function DashboardProvider({ children }) {
     (async () => {
       Emitter.emit("OPEN_LOADER");
       const network = await getCurrentNetwork();
-      if (network && network !== "rinkeby") {
-        return toast.error("Please Switch to the Rinkeby Test Network");
+      if (network && network !== "bnbt") {
+        return toast.error("Please Switch to the Binance Smart Chain TestNet");
       }
-      // const beima = await getBeimaContract();
+      const beima = await getBeimaContract();
       const registerStatus = await userIsRegistered();
       const data = await getUserDetails();
       const { user, pension } = data;
@@ -62,7 +61,7 @@ export function DashboardProvider({ children }) {
       if (pension) setPensions([{ ...pension }]);
       setIsRegistered(registerStatus);
       Emitter.emit("CLOSE_LOADER");
-      // console.log(beima);
+      console.log(beima);
     })();
 
   useEffect(() => {
