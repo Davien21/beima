@@ -11,6 +11,17 @@ import {
   getActiveWallet,
 } from "./web3Service";
 
+const handleServiceErrors = (err, onError) => {
+  console.log("Something went wrong", err);
+  let msg = "Something went wrong, please try again later.";
+  if (err.code === 4001) msg = "This transaction was denied by you";
+  if (err.code === -32016)
+    msg = "You don't have enough funds to complete this transaction";
+  Emitter.emit("CLOSE_LOADER");
+  toast.error(msg);
+  if (onError) onError();
+};
+
 export async function createFlexiblePlan(
   coin,
   planIpfs,
@@ -55,12 +66,7 @@ export async function createFlexiblePlan(
       Emitter.emit("CLOSE_LOADER");
     });
   } catch (err) {
-    console.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later.";
-    if (err.code === 4001) msg = "This transaction was denied by you";
-    Emitter.emit("CLOSE_LOADER");
-    toast.error(msg);
-    onError();
+    handleServiceErrors(err, onError);
   }
 }
 
@@ -91,13 +97,7 @@ export async function depositAsset(onSuccess) {
       Emitter.emit("CLOSE_LOADER");
     });
   } catch (err) {
-    console.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later.";
-    if (err.code === 4001) msg = "This transaction was denied by you";
-    if (err.code === -32016)
-      msg = "You don't have enough funds to complete this transaction";
-    Emitter.emit("CLOSE_LOADER");
-    toast.error(msg);
+    handleServiceErrors(err);
   }
 }
 
@@ -127,13 +127,7 @@ export async function supplyAssets(totalUnsuppliedAmount, onSuccess) {
       onSuccess();
     });
   } catch (err) {
-    console.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later.";
-    if (err.code === 4001) msg = "This transaction was denied by you";
-    if (err.code === -32016)
-      msg = "You don't have enough funds to complete this transaction";
-    Emitter.emit("CLOSE_LOADER");
-    toast.error(msg);
+    handleServiceErrors(err);
   }
 }
 
@@ -161,8 +155,8 @@ export async function withdrawAssets(deposit, onSuccess) {
       toast.success(`Funds successfully redeemed, proceeding to withdraw...`);
       try {
         await beimaContract.withdrawToken(asset, depositInWei);
-      } catch (error) {
-        console.log("Something went wrong", error);
+      } catch (err) {
+        handleServiceErrors(err);
       }
     });
 
@@ -172,12 +166,6 @@ export async function withdrawAssets(deposit, onSuccess) {
       onSuccess();
     });
   } catch (err) {
-    console.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later.";
-    if (err.code === 4001) msg = "This transaction was denied by you";
-    if (err.code === -32016)
-      msg = "You don't have enough funds to complete this transaction";
-    Emitter.emit("CLOSE_LOADER");
-    toast.error(msg);
+    handleServiceErrors(err);
   }
 }
