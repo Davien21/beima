@@ -1,7 +1,7 @@
 /** @format */
 import { formatEther } from "@ethersproject/units";
 import { ethers } from "ethers";
-import { BscBUSDContractAddress } from "../utils";
+import { allowedNetwork, mBUSDContractAddress } from "../utils";
 import toast from "../utils/toastConfig";
 import Emitter from "./emitter";
 import {
@@ -14,8 +14,8 @@ import {
 export async function userIsRegistered() {
   try {
     if (!hasEthereum()) return false;
-    const network = await getCurrentNetwork();
-    if (network && network !== "bnbt") return false;
+    const currentNetwork = await getCurrentNetwork();
+    if (currentNetwork && currentNetwork !== allowedNetwork) return false;
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -71,9 +71,7 @@ export async function getUserDetails() {
     );
     const totalDeposit = parseInt(
       formatEther(
-        (
-          await beimaContract.assets(BscBUSDContractAddress, address)
-        ).toString()
+        (await beimaContract.assets(mBUSDContractAddress, address)).toString()
       )
     );
 

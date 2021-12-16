@@ -1,13 +1,13 @@
 import { parseEther } from "@ethersproject/units";
 import { ethers } from "ethers";
-import { formatMoney } from "../utils";
+import { allowedNetwork, formatMoney } from "../utils";
 import toast from "../utils/toastConfig";
 import Emitter from "./emitter";
 import {
   hasEthereum,
   getBeimaContract,
   getCurrentNetwork,
-  getBscBUSDContract,
+  getmBUSDContract,
   getActiveWallet,
 } from "./web3Service";
 
@@ -24,19 +24,20 @@ export async function createFlexiblePlan(
   const timeDurationOfDeposit = lockTime;
   try {
     if (!hasEthereum()) return false;
-    const network = await getCurrentNetwork();
-    if (network && !network.includes("bnbt")) return false;
+    const currentNetwork = await getCurrentNetwork();
+    if (currentNetwork && currentNetwork !== allowedNetwork) return false;
+
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
     const beimaContract = await getBeimaContract(signer);
 
-    const BscBUSDContract = await getBscBUSDContract(signer);
-    await BscBUSDContract.approve(
+    const mBUSDContract = await getmBUSDContract(signer);
+    await mBUSDContract.approve(
       beimaContract.address,
       parseEther(totalApprovedAmount).toString()
     );
-    await BscBUSDContract.on("Approval", () => {
+    await mBUSDContract.on("Approval", () => {
       toast.success("Approval was successful");
     });
 
@@ -68,8 +69,8 @@ export async function depositAsset(onSuccess) {
   Emitter.emit("OPEN_LOADER");
   try {
     if (!hasEthereum()) return false;
-    const network = await getCurrentNetwork();
-    if (network && !network.includes("bnbt")) return false;
+    const currentNetwork = await getCurrentNetwork();
+    if (currentNetwork && currentNetwork !== allowedNetwork) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await getActiveWallet();
@@ -105,8 +106,8 @@ export async function supplyAssets(totalUnsuppliedAmount, onSuccess) {
   Emitter.emit("OPEN_LOADER");
   try {
     if (!hasEthereum()) return false;
-    const network = await getCurrentNetwork();
-    if (network && !network.includes("bnbt")) return false;
+    const currentNetwork = await getCurrentNetwork();
+    if (currentNetwork && currentNetwork !== allowedNetwork) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await getActiveWallet();
@@ -143,8 +144,8 @@ export async function withdrawAssets(deposit, onSuccess) {
   Emitter.emit("OPEN_LOADER");
   try {
     if (!hasEthereum()) return false;
-    const network = await getCurrentNetwork();
-    if (network && !network.includes("bnbt")) return false;
+    const currentNetwork = await getCurrentNetwork();
+    if (currentNetwork && currentNetwork !== allowedNetwork) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await getActiveWallet();

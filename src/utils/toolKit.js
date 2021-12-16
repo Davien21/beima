@@ -9,4 +9,9 @@ const formatMoney = (amount) => {
   return formatter.format(amount);
 };
 
-export { formatMoney };
+const networkNames = {
+  bnbt: "Binance Smart Chain TestNet",
+  rinkeby: "Rinkeby Test Net",
+};
+
+export { formatMoney, networkNames };

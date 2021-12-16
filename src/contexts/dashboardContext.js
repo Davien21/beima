@@ -11,6 +11,7 @@ import { getUserDetails, userIsRegistered } from "../services/userService";
 import { getBeimaContract, getCurrentNetwork } from "../services/web3Service";
 import toast from "../utils/toastConfig";
 import { useAppContext } from "./appContext";
+import { allowedNetwork, networkNames } from "../utils";
 
 const DashboardContext = createContext();
 
@@ -49,9 +50,11 @@ export function DashboardProvider({ children }) {
   const loadApp = () =>
     (async () => {
       Emitter.emit("OPEN_LOADER");
-      const network = await getCurrentNetwork();
-      if (network && network !== "bnbt") {
-        return toast.error("Please Switch to the Binance Smart Chain TestNet");
+      const currentNetwork = await getCurrentNetwork();
+      if (currentNetwork && currentNetwork !== allowedNetwork) {
+        return toast.error(
+          `Please Switch to the ${networkNames[allowedNetwork]}`
+        );
       }
       const beima = await getBeimaContract();
       const registerStatus = await userIsRegistered();

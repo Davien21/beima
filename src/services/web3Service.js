@@ -1,6 +1,11 @@
 import { ethers } from "ethers";
 import { BeimaAbi } from "../contracts/abis";
-import { BeimaContractAddress, BscBUSDContractAddress } from "../utils";
+import {
+  allowedNetwork,
+  BeimaContractAddress,
+  mBUSDContractAddress,
+  networkNames,
+} from "../utils";
 import toast from "../utils/toastConfig";
 
 export const connectToMetaMask = async (setError) => {
@@ -49,12 +54,14 @@ export function listenToNetworkChanges(handler) {
   if (!hasEthereum()) return false;
 
   window.ethereum.on("chainChanged", async () => {
-    const network = await getCurrentNetwork();
-    if (network && network !== "bnbt") {
-      return toast.error("Please Switch to the Binance Smart Chain TestNet");
+    const currentNetwork = await getCurrentNetwork();
+    if (currentNetwork && currentNetwork !== allowedNetwork) {
+      return toast.error(
+        `Please Switch to the ${networkNames[allowedNetwork]}`
+      );
     } else {
       toast.success(
-        "You successfully switched to the Binance Smart Chain TestNet"
+        `You successfully switched to the ${networkNames[allowedNetwork]}`
       );
       // handler(network);
     }
@@ -77,13 +84,13 @@ export async function getBeimaContract(signer) {
   }
 }
 
-export async function getBscBUSDContract(signer) {
+export async function getmBUSDContract(signer) {
   try {
     if (!hasEthereum()) return false;
     const USDTAbi = await fetch(
       "https://api.bscscan.com/api?module=contract&action=getabi&address=0xe9e7cea3dedca5984780bafc599bd69add087d56"
     ).then((r) => r.json());
-    return new ethers.Contract(BscBUSDContractAddress, USDTAbi.result, signer);
+    return new ethers.Contract(mBUSDContractAddress, USDTAbi.result, signer);
   } catch (err) {
     console.log("failed to load contract", err);
   }
