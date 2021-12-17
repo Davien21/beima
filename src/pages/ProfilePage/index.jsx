@@ -32,7 +32,7 @@ function ProfilePage(props) {
               <img src={logoImage} alt="" />
             </div>
             <div className="flex items-center justify-center">
-              <span className="text-center text-2xl">
+              <span className="text-center text-4xl">
                 <strong>{user?.firstName}</strong> {user?.lastName}
               </span>
             </div>
@@ -44,12 +44,6 @@ function ProfilePage(props) {
           <div className="col-span-2 flex flex-col lg:col-span-1 mb-10 lg:mb-0">
             <p className={`${styles["head-text"]}`}>Your Details</p>
             <div className={`${styles["block"]} h-full mt-5 px-10 py-8`}>
-              <div className="flex flex-wrap gap-x-5 my-2">
-                <span className={`${styles["detail-title"]} pr-2`}>Name:</span>
-                <span
-                  className={`col-span-4 ${styles["detail"]}`}
-                >{`${user?.firstName} ${user?.lastName}`}</span>
-              </div>
               <div className="flex flex-wrap gap-x-5 my-2">
                 <span className={`${styles["detail-title"]} pr-2`}>Email:</span>
                 <span

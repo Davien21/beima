@@ -4,6 +4,7 @@
   z-index: var(--header-z-index);
   backdrop-filter: blur(10px);
   height: 70px;
+  margin-bottom: 60px;
 }
 
 .logo {
