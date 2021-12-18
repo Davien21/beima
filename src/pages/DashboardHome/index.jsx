@@ -28,9 +28,9 @@ function DashboardHome() {
   const { isRegistered, pensions } = useDashboardContext();
 
   return (
-    <main className={`${styles["container"]} container  py-5`}>
+    <main className={`${styles["container"]} container  pb-5`}>
       {!isRegistered && <ProfileSetupForm />}
-      <div className={`py-5 mt-6`}>
+      <div className={`pb-5`}>
         <h1 className={styles.pageText + " text-white mb-8"}>Dashboard</h1>
         <div className="grid grid-cols-6 gap-4">
           <div className="col-span-6 md:col-span-3 xl:col-span-2">

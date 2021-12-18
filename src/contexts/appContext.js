@@ -8,7 +8,6 @@ import {
 
 import {
   connectToMetaMask,
-  // getActiveWallet,
   listenToAccountChanges,
   hasEthereum,
   unmountEthListeners,

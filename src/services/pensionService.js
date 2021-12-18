@@ -1,4 +1,4 @@
-import { parseEther } from "@ethersproject/units";
+import { formatEther, parseEther } from "@ethersproject/units";
 import { ethers } from "ethers";
 import { allowedNetwork, formatMoney } from "../utils";
 import toast from "../utils/toastConfig";
@@ -10,6 +10,17 @@ import {
   getmBUSDContract,
   getActiveWallet,
 } from "./web3Service";
+
+const handleServiceErrors = (err, onError) => {
+  console.log("Something went wrong", err);
+  let msg = "Something went wrong, please try again later.";
+  if (err.code === 4001) msg = "This transaction was denied by you";
+  if (err.code === -32016)
+    msg = "You don't have enough funds to complete this transaction";
+  Emitter.emit("CLOSE_LOADER");
+  toast.error(msg);
+  if (onError) onError();
+};
 
 export async function createFlexiblePlan(
   coin,
@@ -56,12 +67,7 @@ export async function createFlexiblePlan(
       Emitter.emit("CLOSE_LOADER");
     });
   } catch (err) {
-    console.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later.";
-    if (err.code === 4001) msg = "This transaction was denied by you";
-    Emitter.emit("CLOSE_LOADER");
-    toast.error(msg);
-    onError();
+    handleServiceErrors(err, onError);
   }
 }
 
@@ -76,6 +82,7 @@ export async function depositAsset(onSuccess) {
     const address = await getActiveWallet();
 
     const beimaContract = await getBeimaContract(signer);
+    console.log(beimaContract);
     const details = await beimaContract.pensionServiceApplicant(address);
 
     let monthlyDepositInWei = parseEther(
@@ -84,7 +91,7 @@ export async function depositAsset(onSuccess) {
     const asset = details.client.underlyingAsset;
     console.log({ asset });
     console.log(typeof monthlyDepositInWei);
-    await beimaContract.depositToken(asset, 1);
+    await beimaContract.depositToken(asset, monthlyDepositInWei);
 
     await beimaContract.on("Deposit", () => {
       onSuccess();
@@ -92,13 +99,7 @@ export async function depositAsset(onSuccess) {
       Emitter.emit("CLOSE_LOADER");
     });
   } catch (err) {
-    console.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later.";
-    if (err.code === 4001) msg = "This transaction was denied by you";
-    if (err.code === -32016)
-      msg = "You don't have enough funds to complete this transaction";
-    Emitter.emit("CLOSE_LOADER");
-    toast.error(msg);
+    handleServiceErrors(err);
   }
 }
 
@@ -130,13 +131,7 @@ export async function supplyAssets(totalUnsuppliedAmount, onSuccess) {
       onSuccess();
     });
   } catch (err) {
-    console.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later.";
-    if (err.code === 4001) msg = "This transaction was denied by you";
-    if (err.code === -32016)
-      msg = "You don't have enough funds to complete this transaction";
-    Emitter.emit("CLOSE_LOADER");
-    toast.error(msg);
+    handleServiceErrors(err);
   }
 }
 
@@ -172,13 +167,42 @@ export async function withdrawAssets(deposit, onSuccess) {
     //   Emitter.emit("CLOSE_LOADER");
     //   onSuccess();
     // });
+
+    const cAsset = details.client.underlyingAsset;
+
+    const asset = await beimaContract.getAssetAddress(cAsset);
+    const depositInWei = parseEther(deposit.toString()).toString();
+    const totalUnsuppliedAmount = parseInt(
+      formatEther((await beimaContract?.unsuppliedAmount(address)).toString())
+    );
+    const stakedBalance = parseInt(
+      formatEther((await beimaContract?.stakedBalance(address)).toString())
+    );
+    if (stakedBalance > 0) {
+      await beimaContract.updateLockTime();
+      setTimeout(async () => {
+        await beimaContract.redeemCErc20Tokens(cAsset);
+        await beimaContract.on("Redeem", async () => {
+          toast.success(
+            `Funds successfully redeemed, proceeding to withdraw...`
+          );
+          try {
+            await beimaContract.withdrawToken(asset);
+          } catch (err) {
+            handleServiceErrors(err);
+          }
+        });
+      }, 15000);
+    }
+    console.log(details);
+    if (stakedBalance === 0) await beimaContract.withdrawToken(asset);
+
+    await beimaContract.on("Withdraw", () => {
+      toast.success(`You have successfully withdrawn ${formatMoney(deposit)}`);
+      Emitter.emit("CLOSE_LOADER");
+      onSuccess();
+    });
   } catch (err) {
-    console.log("Something went wrong", err);
-    let msg = "Something went wrong, please try again later.";
-    if (err.code === 4001) msg = "This transaction was denied by you";
-    if (err.code === -32016)
-      msg = "You don't have enough funds to complete this transaction";
-    Emitter.emit("CLOSE_LOADER");
-    toast.error(msg);
+    handleServiceErrors(err);
   }
 }

@@ -62,6 +62,7 @@ export function DashboardProvider({ children }) {
       const { user, pension } = data;
       setUser(user);
       if (pension) setPensions([{ ...pension }]);
+      if (!pension) setPensions([]);
       setIsRegistered(registerStatus);
       Emitter.emit("CLOSE_LOADER");
       console.log(beima);

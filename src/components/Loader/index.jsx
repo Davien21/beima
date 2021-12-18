@@ -22,9 +22,7 @@ function Loader() {
     document.body.style.overflow = isActive ? "hidden" : "auto";
     if (isActive) return setContainerClass(`${styles["container"]}`);
 
-    setTimeout(() => {
-      setContainerClass(`${styles["container"]} ${styles["hide"]}`);
-    }, 600);
+    setContainerClass(`${styles["container"]} ${styles["hide"]}`);
 
     return () => {
       setContainerClass(`${styles["container"]} ${styles["hide"]}`);
