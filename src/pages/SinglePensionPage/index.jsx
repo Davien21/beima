@@ -31,7 +31,8 @@ function SinglePensionPage(props) {
       const onSuccess = () => {
         const currentState = { ...details };
         currentState.totalDeposit =
-          currentState.totalDeposit + currentState.monthlyDeposit;
+          parseInt(currentState.totalDeposit) +
+          parseInt(currentState.monthlyDeposit);
         currentState.totalUnsuppliedAmount = currentState.totalDeposit;
         updatePensionPlan(id, currentState);
         // console.log(details, currentState);
