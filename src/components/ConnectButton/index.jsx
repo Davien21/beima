@@ -8,6 +8,7 @@ function ConnectButton() {
   const history = useHistory();
   const { handleWalletConnect, hasMetaMask, isConnected } = useAppContext();
 
+  // eslint-disable-next-line no-unused-vars
   async function connect() {
     const connectionStatus = await handleWalletConnect();
     if (!connectionStatus) return;

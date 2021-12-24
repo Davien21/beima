@@ -155,7 +155,10 @@ export async function withdrawAssets(deposit, onSuccess) {
     const cAsset = details.client.underlyingAsset;
 
     const asset = await beimaContract.getAssetAddress(cAsset);
+
+    // eslint-disable-next-line no-unused-vars
     const depositInWei = parseEther(deposit.toString()).toString();
+    // eslint-disable-next-line no-unused-vars
     const totalUnsuppliedAmount = parseInt(
       formatEther((await beimaContract?.unsuppliedAmount(address)).toString())
     );
