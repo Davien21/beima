@@ -2,6 +2,7 @@ import { Button } from "../Button";
 import { useHistory } from "react-router-dom";
 import { useAppContext } from "../../contexts/appContext";
 import styles from "./connect-button.module.css";
+import toast from "../../utils/toastConfig";
 
 function ConnectButton() {
   const history = useHistory();
@@ -11,6 +12,12 @@ function ConnectButton() {
     const connectionStatus = await handleWalletConnect();
     if (!connectionStatus) return;
     history.push("/dashboard");
+  }
+
+  function showUpgradingAlert() {
+    toast.info(
+      "We are currently undergoing a major upgrade on our platform. \n Please try again later."
+    );
   }
 
   return (
@@ -28,7 +35,7 @@ function ConnectButton() {
         </div>
       )}
       {hasMetaMask && (
-        <Button onClick={connect} className="font-medium">
+        <Button onClick={showUpgradingAlert} className="font-medium">
           {isConnected ? "Open Dashboard" : "Connect Wallet"}
         </Button>
       )}

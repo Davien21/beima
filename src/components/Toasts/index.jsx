@@ -19,11 +19,13 @@ function Toast() {
   const bgImages = {
     success: greenBubblesSvg,
     error: redBubblesSvg,
+    info: greenBubblesSvg,
   };
 
   const ticks = {
     success: successTickSvg,
     error: failureTickSvg,
+    info: successTickSvg,
   };
 
   useEffect(() => {
@@ -68,7 +70,9 @@ function Toast() {
           <img src={bgImages[toastConfig.type]} alt="" />
         </div>
         <div className={`${styles["content"]} col-span-5`}>
-          <p className={`${styles["heading"]} mb-2`}>{toastConfig.type}</p>
+          {toastConfig.type !== "info" && (
+            <p className={`${styles["heading"]} mb-2`}>{toastConfig.type}</p>
+          )}
           <p className={`${styles["message"]}`}>{toastConfig.message}</p>
         </div>
       </div>

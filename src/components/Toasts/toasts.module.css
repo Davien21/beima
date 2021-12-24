@@ -58,6 +58,10 @@
   background-color: var(--app-green);
 }
 
+.container.info {
+  background-color: var(--app-green);
+}
+
 .heading {
   text-transform: capitalize;
   font-weight: 550;

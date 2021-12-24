@@ -7,6 +7,9 @@ const toast = {
   success: (message) => {
     Emitter.emit("TOAST", { type: "success", message });
   },
+  info: (message) => {
+    Emitter.emit("TOAST", { type: "info", message });
+  },
 };
 
 export default toast;
