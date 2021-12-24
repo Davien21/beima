@@ -67,8 +67,9 @@ export async function getUserDetails() {
     const details = await beimaContract.pensionServiceApplicant(address);
     const monthlyDeposit = parseInt(details.client.amountToSpend.toString());
     const totalUnsuppliedAmount = parseInt(
-      formatEther((await beimaContract?.unsuppliedAmount(address)).toString())
+      formatEther((await beimaContract?.amountSupplied(address)).toString())
     );
+    
     const totalDeposit = parseInt(
       formatEther(
         (await beimaContract.assets(mBUSDContractAddress, address)).toString()

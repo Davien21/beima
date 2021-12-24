@@ -10,7 +10,7 @@ const formatMoney = (amount) => {
 };
 
 const networkNames = {
-  bnbt: "Binance Smart Chain TestNet",
+  bnbt: "Binance Smart Chain Test Net",
   rinkeby: "Rinkeby Test Net",
 };
 

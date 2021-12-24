@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { BeimaAbi } from "../contracts/abis";
+import { BeimaAbi, mBUSDAbi } from "../contracts/abis";
 import {
   allowedNetwork,
   BeimaContractAddress,
@@ -87,10 +87,8 @@ export async function getBeimaContract(signer) {
 export async function getmBUSDContract(signer) {
   try {
     if (!hasEthereum()) return false;
-    const USDTAbi = await fetch(
-      "https://api.bscscan.com/api?module=contract&action=getabi&address=0xe9e7cea3dedca5984780bafc599bd69add087d56"
-    ).then((r) => r.json());
-    return new ethers.Contract(mBUSDContractAddress, USDTAbi.result, signer);
+
+    return new ethers.Contract(mBUSDContractAddress, mBUSDAbi.abi, signer);
   } catch (err) {
     console.log("failed to load contract", err);
   }

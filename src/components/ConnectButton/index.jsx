@@ -12,7 +12,7 @@ function ConnectButton() {
     if (!connectionStatus) return;
     history.push("/dashboard");
   }
-
+  
   return (
     <div className={`${styles["container"]}`}>
       {!hasMetaMask && (

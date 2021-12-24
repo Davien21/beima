@@ -88,9 +88,9 @@ export async function depositAsset(onSuccess) {
     let monthlyDepositInWei = parseEther(
       details.client.amountToSpend.toString()
     ).toString();
+
     const asset = details.client.underlyingAsset;
-    console.log({ asset });
-    console.log(typeof monthlyDepositInWei);
+    // console.log({ asset });
     await beimaContract.depositToken(asset, monthlyDepositInWei);
 
     await beimaContract.on("Deposit", () => {
@@ -103,7 +103,7 @@ export async function depositAsset(onSuccess) {
   }
 }
 
-export async function supplyAssets(totalUnsuppliedAmount, onSuccess) {
+export async function supplyAssets(unsuppliedAmount, onSuccess) {
   Emitter.emit("OPEN_LOADER");
   try {
     if (!hasEthereum()) return false;
@@ -111,25 +111,27 @@ export async function supplyAssets(totalUnsuppliedAmount, onSuccess) {
     if (currentNetwork && currentNetwork !== allowedNetwork) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
-    const address = await getActiveWallet();
+    // const address = await getActiveWallet();
 
     const beimaContract = await getBeimaContract(signer);
-    const details = await beimaContract.pensionServiceApplicant(address);
 
-    let monthlyDepositInWei = parseEther(
-      details.client.amountToSpend.toString()
+    const unsuppliedAmountInWei = parseEther(
+      unsuppliedAmount.toString()
     ).toString();
 
-    await beimaContract.depositToXendFinance(monthlyDepositInWei);
+    // console.log({unsuppliedAmount})
+    await beimaContract.depositToXendFinance(unsuppliedAmountInWei);
 
-    await beimaContract.on("Supply", () => {
+    setTimeout(() => {
       toast.success(
-        `You have successfully staked ${formatMoney(totalUnsuppliedAmount)}`
+        `You have successfully staked ${formatMoney(unsuppliedAmount)}`
       );
       onSuccess();
       Emitter.emit("CLOSE_LOADER");
       onSuccess();
-    });
+    }, 15000);
+
+    // await beimaContract.on("Deposit", () => {});
   } catch (err) {
     handleServiceErrors(err);
   }
@@ -144,64 +146,54 @@ export async function withdrawAssets(deposit, onSuccess) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await getActiveWallet();
-
     const beimaContract = await getBeimaContract(signer);
+
+    let totalDeposit = parseEther(deposit.toString()).toString();
+
     const details = await beimaContract.pensionServiceApplicant(address);
-    console.log(details);
-    // const asset = details.client.underlyingAsset;
-    // const depositInWei = parseEther(deposit.toString()).toString();
-    // // console.log(depositInWei);
-    // await beimaContract.withdrawFromXendFinance(asset);
+    // console.log({ totalDeposit });
 
-    // await beimaContract.on("MyLog", async () => {
-    //   toast.success(`Funds successfully redeemed, proceeding to withdraw...`);
-    //   try {
-    //     await beimaContract.withdrawToken(asset, depositInWei);
-    //   } catch (error) {
-    //     console.log("Something went wrong", error);
-    //   }
-    // });
+    const asset = details.client.underlyingAsset;
 
-    // await beimaContract.on("Withdraw", () => {
-    //   toast.success(`You have successfully withdrawn ${formatMoney(deposit)}`);
-    //   Emitter.emit("CLOSE_LOADER");
-    //   onSuccess();
-    // });
+    const totalUnsuppliedAmount = (
+      await beimaContract?.amountSupplied(address)
+    ).toString();
 
-    const cAsset = details.client.underlyingAsset;
+    console.log({ totalUnsuppliedAmount, totalDeposit });
 
-    const asset = await beimaContract.getAssetAddress(cAsset);
-    const depositInWei = parseEther(deposit.toString()).toString();
-    const totalUnsuppliedAmount = parseInt(
-      formatEther((await beimaContract?.unsuppliedAmount(address)).toString())
-    );
-    const stakedBalance = parseInt(
-      formatEther((await beimaContract?.stakedBalance(address)).toString())
-    );
-    if (stakedBalance > 0) {
-      await beimaContract.updateLockTime();
-      setTimeout(async () => {
-        await beimaContract.redeemCErc20Tokens(cAsset);
-        await beimaContract.on("Redeem", async () => {
-          toast.success(
-            `Funds successfully redeemed, proceeding to withdraw...`
-          );
-          try {
-            await beimaContract.withdrawToken(asset);
-          } catch (err) {
-            handleServiceErrors(err);
-          }
-        });
-      }, 15000);
+
+
+    if (parseInt(totalUnsuppliedAmount) > 0 && parseInt(totalDeposit)) {
+      await beimaContract.withdrawFromXendFinance(asset);
+      await beimaContract.on("Withdraw", async () => {
+        toast.success(
+          `You have redeemed your funds. Proceeding to withdraw...`
+        );
+        try {
+          await beimaContract.withdrawToken(asset, totalDeposit);
+          await beimaContract.on("Withdraw", () => {
+            toast.success(
+              `You have successfully withdrawn ${formatMoney(deposit)}`
+            );
+            Emitter.emit("CLOSE_LOADER");
+            onSuccess();
+          });
+        } catch (err) {
+          handleServiceErrors(err);
+        }
+      });
     }
-    console.log(details);
-    if (stakedBalance === 0) await beimaContract.withdrawToken(asset);
 
-    await beimaContract.on("Withdraw", () => {
-      toast.success(`You have successfully withdrawn ${formatMoney(deposit)}`);
-      Emitter.emit("CLOSE_LOADER");
-      onSuccess();
-    });
+    if (totalUnsuppliedAmount === totalDeposit) {
+      await beimaContract.withdrawToken(asset, totalDeposit);
+      await beimaContract.on("Withdraw", async () => {
+        toast.success(
+          `You have successfully withdrawn ${formatMoney(deposit)}`
+        );
+        Emitter.emit("CLOSE_LOADER");
+        onSuccess();
+      });
+    }
   } catch (err) {
     handleServiceErrors(err);
   }
