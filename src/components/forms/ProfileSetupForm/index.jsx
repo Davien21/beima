@@ -82,7 +82,7 @@ function ProfileSetupForm() {
   });
 
   return (
-    <div className={`${styles["container"]} py- `}>
+    <div className={`${styles["container"]} `}>
       <div className="">
         <div
           className={`${styles["modal"]} py-5 text-white rounded`}
