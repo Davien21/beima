@@ -36,7 +36,7 @@ function ConnectButton() {
         </div>
       )}
       {hasMetaMask && (
-        <Button onClick={connect} className="font-medium">
+        <Button onClick={showUpgradingAlert} className="font-medium">
           {isConnected ? "Open Dashboard" : "Connect Wallet"}
         </Button>
       )}
