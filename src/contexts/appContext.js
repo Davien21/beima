@@ -15,10 +15,13 @@ import {
 } from "../services/web3Service";
 
 import { useHistory } from "react-router-dom";
+import { useMoralis } from "react-moralis";
 
 const AppContext = createContext();
 
 export function AppProvider({ children }) {
+  const { web3, Moralis, user, authenticate, logout } = useMoralis();
+  console.log({ web3, Moralis, user, authenticate });
   const history = useHistory();
   const [isInitiallyFetched, setIsInitiallyFetched] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -27,16 +30,19 @@ export function AppProvider({ children }) {
 
   const handleWalletConnect = useCallback(() => {
     return (async () => {
-      const connectionStatus = await connectToMetaMask();
-      if (!connectionStatus) return false;
+      try {
+        const connection = await authenticate({ provider: "Injected" });
+        console.log({ connection });
+        setIsConnected(true);
 
-      setIsConnected(true);
+        // localStorage.setItem("wallet-connection", true);
 
-      localStorage.setItem("wallet-connection", true);
-
-      return true;
+        return true;
+      } catch (error) {
+        console.log(error);
+      }
     })();
-  }, []);
+  }, [authenticate]);
 
   const resetValues = useCallback(() => {
     return (async () => {
@@ -49,7 +55,8 @@ export function AppProvider({ children }) {
     })();
   }, []);
 
-  const handleWalletDisconnect = () => {
+  const handleWalletDisconnect = async () => {
+    await logout();
     setIsConnected(false);
     localStorage.removeItem("wallet-connection");
     history.replace("/");
