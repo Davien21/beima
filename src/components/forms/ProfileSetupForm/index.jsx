@@ -8,9 +8,9 @@ import { LeftArrow } from "../../../assets/svg";
 
 import { Button, CheckboxInput } from "../../index";
 import { Input } from "../../Input";
-import { ipfsMini } from "../../../services/ipfs";
 import { registerUser } from "../../../services/userService";
 import { useDashboardContext } from "../../../contexts/dashboardContext";
+import Moralis from "moralis";
 
 const validationSchema = Yup.object({
   firstName: Yup.string().required("First Name is required"),
@@ -64,7 +64,13 @@ function ProfileSetupForm() {
           phone: values.Nphone,
         },
       };
-      const userIpfsHash = await ipfsMini.addJSON(user);
+
+      const file = new Moralis.File(`${user.firstName}_${user.lastName}.json`, {
+        base64: btoa(JSON.stringify(user)),
+      });
+      const fileData = await file.saveIPFS();
+
+      const userIpfsHash = fileData._ipfs
 
       const onRegister = () => {
         setIsRegistered(true);

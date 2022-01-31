@@ -6,7 +6,12 @@ import toast from "../../utils/toastConfig";
 
 function ConnectButton() {
   const history = useHistory();
-  const { handleWalletConnect, hasMetaMask, isConnected } = useAppContext();
+  const {
+    handleWalletConnect,
+    hasMetaMask,
+    isConnected,
+    setIsConnectModalOpen,
+  } = useAppContext();
 
   // eslint-disable-next-line no-unused-vars
   async function connect() {

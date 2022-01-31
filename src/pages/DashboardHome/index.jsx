@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BalanceCard } from "../../components/Cards/BalanceCard";
 import styles from "./dashboard-home.module.css";
 
@@ -13,7 +13,9 @@ import { useDashboardContext } from "../../contexts/dashboardContext";
 import { PensionPlans } from "../../layouts/DashLayout/components/PensionPlans";
 import { ProfileSetupForm } from "../../components";
 import { Link } from "react-router-dom";
-import { formatMoney } from "../../utils";
+import { BeimaContractAddress, formatMoney } from "../../utils";
+import { useApiContract } from "react-moralis";
+import { BeimaAbi } from "../../contracts/abis";
 
 const getInterest = (interest) => {
   if (interest?.currency === "$")
@@ -26,7 +28,7 @@ const nullInterest = { amount: 0, currency: "XEND" };
 
 function DashboardHome() {
   const { isRegistered, pensions } = useDashboardContext();
-
+ 
   return (
     <main className={`${styles["container"]} container  pb-5`}>
       {!isRegistered && <ProfileSetupForm />}

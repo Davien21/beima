@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
-import styles from "./flexible-plan-form.module.css";
+import Moralis from "moralis";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+
 import {
   barchartImage,
   barchartNShadowImage,
   formsBgImage,
 } from "../../../assets/images";
+import styles from "./flexible-plan-form.module.css";
 import { InputGroup } from "../../InputGroup";
 import LockTimeInput from "../components/LockTimeInput";
 import { Button, CheckboxInput, CloseButton } from "../../index";
 import { useDashboardContext } from "../../../contexts/dashboardContext";
 import { createFlexiblePlan } from "../../../services/pensionService";
-import { ipfsMini } from "../../../services/ipfs";
 
 const validationSchema = Yup.object({
   deposit: Yup.number().required("An Amount in USDT is required"),
@@ -58,8 +59,13 @@ function FlexiblePlanForm({ isOpen, onClose }) {
     };
     const coin = coins.find((coin) => coin.name === "cUSDT").address;
     (async () => {
-      const planIpfsHash = await ipfsMini.addJSON({ ...plan });
+      const file = new Moralis.File(`plan.json`, {
+        base64: btoa(JSON.stringify(plan)),
+      });
+      const fileData = await file.saveIPFS();
 
+      const planIpfsHash = fileData._ipfs
+    
       const onAddPlan = () => {
         addNewPensionPlan(plan);
         onClose();

@@ -31,6 +31,8 @@ import failureTickSvg from "./failure-tick.svg";
 import userSvg from "./user.svg";
 import pensionDueSvg from "./pension_due.svg";
 import greenCalenderSvg from "./green-calender.svg";
+import metaMaskIcon from "./metamask.svg";
+import wallectConnectIcon from "./walletconnect.svg";
 
 export {
   BeimaLogo,
@@ -59,10 +61,12 @@ export {
   PlusSvg,
   CheckBox,
   pensionDueSvg,
+  greenCalenderSvg,
+  LeftArrow,
   DashHomeIcon,
   DashUserIcon,
   DashHistoryIcon,
   MenuIcon,
-  greenCalenderSvg,
-  LeftArrow,
+  metaMaskIcon,
+  wallectConnectIcon,
 };

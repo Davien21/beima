@@ -22,7 +22,7 @@ export async function userIsRegistered() {
 
     const beimaContract = await getBeimaContract(signer);
     const address = getActiveWallet();
-
+    console.log(address);
     return await beimaContract?.isRegistered(address);
   } catch (err) {
     console.log("Something went wrong", err);
@@ -78,14 +78,12 @@ export async function getUserDetails() {
     );
 
     const hasPlan = details.client.hasPlan;
-    const user = await fetch(
-      `https://ipfs.io/ipfs/${details.userDetails}`
-    ).then((r) => r.json());
+    const user = await fetch(`${details.userDetails}`).then((r) => r.json());
 
     if (!hasPlan) return { user, pension: null };
 
     const pensionInfo = await fetch(
-      `https://ipfs.io/ipfs/${details.client.ipfsHashOfUserPensionDetails}`
+      `${details.client.ipfsHashOfUserPensionDetails}`
     ).then((r) => r.json());
 
     const pension = {

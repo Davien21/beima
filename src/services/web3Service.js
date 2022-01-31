@@ -3,6 +3,7 @@ import { BeimaAbi } from "../contracts/abis";
 import { BeimaContractAddress, RinkebyUSDTContractAddress } from "../utils";
 import toast from "../utils/toastConfig";
 
+
 export const connectToMetaMask = async (setError) => {
   try {
     if (!hasEthereum()) return false;

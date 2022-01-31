@@ -7,7 +7,6 @@ import {
 } from "react";
 
 import {
-  connectToMetaMask,
   listenToAccountChanges,
   hasEthereum,
   unmountEthListeners,
@@ -20,36 +19,52 @@ import { useMoralis } from "react-moralis";
 const AppContext = createContext();
 
 export function AppProvider({ children }) {
-  const { web3, Moralis, user, authenticate, logout } = useMoralis();
-  console.log({ web3, Moralis, user, authenticate });
+  const { authenticate, logout, account, Moralis, isAuthenticated } =
+    useMoralis();
   const history = useHistory();
-  const [isInitiallyFetched, setIsInitiallyFetched] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [hasMetaMask, setHasMetaMask] = useState(true);
   const [shouldResetApp, setShouldResetApp] = useState(false);
+  const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+
+  const connectToMetaMask = useCallback(() => {
+    return (async () => {
+      try {
+        let user = await Moralis.Web3.authenticate({
+          signingMessage: "Log in to Beima with Moralis",
+          provider: "Injected",
+        });
+
+        return user;
+      } catch (error) {
+        return false;
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticate]);
 
   const handleWalletConnect = useCallback(() => {
     return (async () => {
-      try {
-        const connection = await authenticate({ provider: "Injected" });
-        console.log({ connection });
-        setIsConnected(true);
+      return await connectToMetaMask();
+    })();
+  }, [connectToMetaMask]);
 
-        // localStorage.setItem("wallet-connection", true);
-
-        return true;
-      } catch (error) {
-        console.log(error);
+  useEffect(() => {
+    (async () => {
+      if (!account && isConnected) {
+        setIsConnected(false);
+        await logout();
       }
     })();
-  }, [authenticate]);
+  }, [account, isConnected, logout]);
+
+  useEffect(() => {
+    if (isAuthenticated) setIsConnected(true);
+    if (!isAuthenticated) setIsConnected(false);
+  }, [isAuthenticated]);
 
   const resetValues = useCallback(() => {
     return (async () => {
-      setIsConnected(true);
-
-      localStorage.setItem("wallet-connection", true);
-
       setShouldResetApp(true);
       return true;
     })();
@@ -58,23 +73,18 @@ export function AppProvider({ children }) {
   const handleWalletDisconnect = async () => {
     await logout();
     setIsConnected(false);
-    localStorage.removeItem("wallet-connection");
     history.replace("/");
   };
 
   const handleAccountChanged = (address) => {
-    if (!address) return handleWalletDisconnect();
     resetValues();
   };
 
   const handleNetworkChanged = () => {
-    // if (!address) return handleWalletDisconnect();
     resetValues();
   };
 
   useEffect(() => {
-    if (!isInitiallyFetched) return;
-
     if (!hasEthereum()) return;
     listenToAccountChanges(handleAccountChanged);
     listenToNetworkChanges(handleNetworkChanged);
@@ -82,18 +92,13 @@ export function AppProvider({ children }) {
   });
 
   useEffect(() => {
-    if (isInitiallyFetched) return;
     if (!hasEthereum()) {
       console.log("Please Install Meta Mask");
       return setHasMetaMask(false);
     }
-    const isInjected = localStorage.getItem("wallet-connection");
-    if (!isInjected) return setIsInitiallyFetched(true);
-
-    handleWalletConnect();
-    setIsInitiallyFetched(true);
+    // if (account) setIsConnected(true);
     return;
-  }, [handleWalletConnect, isInitiallyFetched]);
+  }, [account, handleWalletConnect]);
 
   return (
     <AppContext.Provider
@@ -105,6 +110,8 @@ export function AppProvider({ children }) {
         hasMetaMask,
         shouldResetApp,
         setShouldResetApp,
+        isConnectModalOpen,
+        setIsConnectModalOpen,
       }}
     >
       {children}

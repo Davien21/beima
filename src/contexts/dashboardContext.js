@@ -1,4 +1,5 @@
 import Emitter from "../services/emitter";
+import { useApiContract } from "react-moralis";
 
 import {
   createContext,
@@ -11,6 +12,8 @@ import { getUserDetails, userIsRegistered } from "../services/userService";
 import { getCurrentNetwork } from "../services/web3Service";
 import toast from "../utils/toastConfig";
 import { useAppContext } from "./appContext";
+import { BeimaContractAddress } from "../utils";
+import { BeimaAbi } from "../contracts/abis";
 
 const DashboardContext = createContext();
 
@@ -55,9 +58,10 @@ export function DashboardProvider({ children }) {
         return toast.error("Please Switch to the Rinkeby Test Network");
       }
       // const beima = await getBeimaContract();
+
       const registerStatus = await userIsRegistered();
-      const data = await getUserDetails();
-      const { user, pension } = data;
+      const userdata = await getUserDetails();
+      const { user, pension } = userdata;
       setUser(user);
       if (pension) setPensions([{ ...pension }]);
       if (!pension) setPensions([]);
