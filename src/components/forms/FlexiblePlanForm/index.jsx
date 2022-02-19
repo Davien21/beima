@@ -53,7 +53,7 @@ function FlexiblePlanForm({ isOpen, onClose }) {
       totalDeposit: "0",
       percentageReturn: 10,
       maturityDate,
-      interest: { currency: "XEND", amount: "0" },
+      interest: { currency: "NEAR", amount: "0" },
       dateCreated: today,
     };
     const coin = coins.find((coin) => coin.name === "USDC").address;

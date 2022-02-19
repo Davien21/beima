@@ -227,7 +227,7 @@ function LandingPage(props) {
             >
               <p className={`${styles["card-title"]} mb-4`}>Security</p>
               <p className={`${styles["card-details"]}`}>
-                Your funds are secured using the XEND Finance Layer-2 DEFI
+                Your funds are secured using the NEAR Finance Layer-2 DEFI
                 Protocol.
               </p>
             </div>
@@ -280,7 +280,7 @@ function LandingPage(props) {
                   <img src={apySvg} alt="" />
                 </div>
                 <div className="col-span-7 text-gray-450">
-                  Earn up to 15% APY using XEND Finance Layer-2 Defi Protocol.
+                  Earn up to 15% APY using NEAR Finance Layer-2 Defi Protocol.
                 </div>
               </div>
             </div>
@@ -329,7 +329,7 @@ function LandingPage(props) {
                   <img src={houseSvg} alt="" />
                 </div>
                 <div className="col-span-7 text-gray-450">
-                  Earn Xend tokens as interest, which can be withdrawn as stable
+                  Earn NEAR tokens as interest, which can be withdrawn as stable
                   coins.
                 </div>
               </div>
@@ -378,7 +378,7 @@ function LandingPage(props) {
                       <img src={trophySvg} alt="" />
                     </span>
                     <span className="text-gray-450">
-                      Participate in the XEND hackathon.
+                      Participate in the NEAR hackathon.
                     </span>
                   </li>
                 </ul>
@@ -405,7 +405,7 @@ function LandingPage(props) {
                       <img src={trophySvg} alt="" />
                     </span>
                     <span className="text-gray-450">
-                      Partnership with XEND Finance.
+                      Partnership with NEAR Finance.
                     </span>
                   </li>
                 </ul>

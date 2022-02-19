@@ -22,7 +22,7 @@ const getInterest = (interest) => {
   return `${interest?.amount} ${interest?.currency}`;
 };
 
-const nullInterest = { amount: 0, currency: "XEND" };
+const nullInterest = { amount: 0, currency: "NEAR" };
 
 function DashboardHome() {
   const { isRegistered, pensions } = useDashboardContext();
