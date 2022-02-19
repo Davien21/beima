@@ -1,2 +1,2 @@
-export * as BeimaAbi from "./BeimaAbi.json";
-export * as RinkebyUSDTAbi from "./RinkebyUSDTAbi.json";
+export * as BeimaAuroraABI from "./BeimaAuroraABI.json";
+export * as TestnetUSDCAuroraABI from "./TUSDCAuroraABI.json";

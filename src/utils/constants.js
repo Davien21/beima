@@ -1,4 +1,4 @@
-const BeimaContractAddress = '0xAB524Fc6F9c00c2d2D755CD394d03b4BF7bfC75a';
-const RinkebyUSDTContractAddress = '0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02';
+const BeimaContractAddress = "0x6027C4eDb456D8964108D1a090D6436f9c4B473B";
+const RinkebyUSDCContractAddress = "0x4C91929CBF9a3cACac0DEb220c1A82f50CA6Eb29";
 
-export { BeimaContractAddress, RinkebyUSDTContractAddress };
+export { BeimaContractAddress, RinkebyUSDCContractAddress };

@@ -1,13 +1,15 @@
 import { formatEther, parseEther } from "@ethersproject/units";
 import { ethers } from "ethers";
-import { formatMoney } from "../utils";
+import Web3 from "web3";
+
+import { BeimaContractAddress, formatMoney } from "../utils";
 import toast from "../utils/toastConfig";
 import Emitter from "./emitter";
 import {
   hasEthereum,
   getBeimaContract,
   getCurrentNetwork,
-  getRinkebyUSDTContract,
+  getAuroraUSDTContract,
   getActiveWallet,
 } from "./web3Service";
 
@@ -36,18 +38,18 @@ export async function createFlexiblePlan(
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network.includes("rinkeby")) return false;
+    if (network && !network.includes("Aurora testnet")) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
     const beimaContract = await getBeimaContract(signer);
 
-    const RinkebyUSDTContract = await getRinkebyUSDTContract(signer);
-    await RinkebyUSDTContract.approve(
+    const AuroraUSDTContract = await getAuroraUSDTContract(signer);
+    await AuroraUSDTContract.approve(
       beimaContract.address,
       parseEther(totalApprovedAmount).toString()
     );
-    await RinkebyUSDTContract.on("Approval", () => {
+    await AuroraUSDTContract.on("Approval", () => {
       toast.success("Approval was successful");
     });
 
@@ -75,13 +77,12 @@ export async function depositAsset(onSuccess) {
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network.includes("rinkeby")) return false;
+    if (network && !network.includes("Aurora testnet")) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await getActiveWallet();
 
     const beimaContract = await getBeimaContract(signer);
-    console.log(beimaContract);
     const details = await beimaContract.pensionServiceApplicant(address);
 
     let monthlyDepositInWei = parseEther(
@@ -89,14 +90,7 @@ export async function depositAsset(onSuccess) {
     ).toString();
     const cAsset = details.client.underlyingAsset;
     const asset = await beimaContract.getAssetAddress(cAsset);
-    console.log(monthlyDepositInWei);
-    // const gasPrice = parseInt((await provider.getGasPrice()).toString());
-    // console.log({ gasPrice });
-    // const estimation = await beimaContract.estimateGas.depositToken(
-    //   asset,
-    //   monthlyDepositInWei
-    // );
-    // console.log(estimation);
+
     await beimaContract.depositToken(asset, monthlyDepositInWei);
 
     await beimaContract.on("Deposit", () => {
@@ -114,7 +108,7 @@ export async function supplyAssets(totalUnsuppliedAmount, onSuccess) {
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network.includes("rinkeby")) return false;
+    if (network && !network.includes("Aurora testnet")) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await getActiveWallet();
@@ -144,7 +138,7 @@ export async function withdrawAssets(deposit, onSuccess) {
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && !network.includes("rinkeby")) return false;
+    if (network && !network.includes("Aurora testnet")) return false;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await getActiveWallet();

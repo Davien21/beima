@@ -14,12 +14,9 @@ import { useAppContext } from "./appContext";
 
 const DashboardContext = createContext();
 
+// A list of coin assets and addresses on Aurora testnet
 const coinAssets = [
-  { name: "cUSDT", address: "0x2fB298BDbeF468638AD6653FF8376575ea41e768" },
-  { name: "USDT", address: "0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02" },
-  { name: "USDC", address: "0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b" },
-  { name: "ETH", address: "" },
-  { name: "TUSD", address: "" },
+  { name: "USDC", address: "0x4C91929CBF9a3cACac0DEb220c1A82f50CA6Eb29" },
 ];
 
 export function DashboardProvider({ children }) {
@@ -51,8 +48,8 @@ export function DashboardProvider({ children }) {
     (async () => {
       Emitter.emit("OPEN_LOADER");
       const network = await getCurrentNetwork();
-      if (network && network !== "rinkeby") {
-        return toast.error("Please Switch to the Rinkeby Test Network");
+      if (network && network !== "Aurora testnet") {
+        return toast.error("Please Switch to the Aurora testnet");
       }
       // const beima = await getBeimaContract();
       const registerStatus = await userIsRegistered();

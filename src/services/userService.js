@@ -1,7 +1,7 @@
 /** @format */
 import { formatEther } from "@ethersproject/units";
 import { ethers } from "ethers";
-import { RinkebyUSDTContractAddress } from "../utils";
+import { RinkebyUSDCContractAddress } from "../utils";
 import toast from "../utils/toastConfig";
 import Emitter from "./emitter";
 import {
@@ -15,7 +15,7 @@ export async function userIsRegistered() {
   try {
     if (!hasEthereum()) return false;
     const network = await getCurrentNetwork();
-    if (network && network !== "rinkeby") return false;
+    if (network && network !== "Aurora testnet") return false;
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -72,7 +72,7 @@ export async function getUserDetails() {
     const totalDeposit = parseInt(
       formatEther(
         (
-          await beimaContract?.assets(RinkebyUSDTContractAddress, address)
+          await beimaContract?.assets(RinkebyUSDCContractAddress, address)
         ).toString()
       )
     );

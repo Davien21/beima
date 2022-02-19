@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
-import { BeimaAbi } from "../contracts/abis";
-import { BeimaContractAddress, RinkebyUSDTContractAddress } from "../utils";
+import { BeimaAuroraABI, TestnetUSDCAuroraABI } from "../contracts/abis";
+import { BeimaContractAddress, RinkebyUSDCContractAddress } from "../utils";
 import toast from "../utils/toastConfig";
 
 export const connectToMetaMask = async (setError) => {
@@ -33,8 +33,11 @@ export async function getCurrentNetwork() {
   if (!hasEthereum()) return false;
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
-  const network = (await signer.provider._networkPromise).name;
-  return network;
+  let network = await signer.provider._networkPromise;
+  if (network.chainId === 1313161555) {
+    network.name = "Aurora testnet";
+  }
+  return network.name;
 }
 
 export function listenToAccountChanges(handler) {
@@ -50,10 +53,10 @@ export function listenToNetworkChanges(handler) {
 
   window.ethereum.on("chainChanged", async () => {
     const network = await getCurrentNetwork();
-    if (network && network !== "rinkeby") {
-      return toast.error("Please Switch to the Rinkeby Test Network");
+    if (network && network !== "Aurora testnet") {
+      return toast.error("Please Switch to the Aurora testnet");
     } else {
-      toast.success("You successfully switched to the Rinkeby Test Network");
+      toast.success("You successfully switched to the Aurora testnet");
       // handler(network);
     }
   });
@@ -69,21 +72,23 @@ export async function getBeimaContract(signer) {
   try {
     if (!hasEthereum()) return false;
 
-    return new ethers.Contract(BeimaContractAddress, BeimaAbi.abi, signer);
+    return new ethers.Contract(
+      BeimaContractAddress,
+      BeimaAuroraABI.abi,
+      signer
+    );
   } catch (err) {
     console.log("failed to load contract", err);
   }
 }
 
-export async function getRinkebyUSDTContract(signer) {
+export async function getAuroraUSDTContract(signer) {
   try {
     if (!hasEthereum()) return false;
-    const USDTAbi = await fetch(
-      "https://api-rinkeby.etherscan.io/api?module=contract&action=getabi&address=0xE2F373f64f7b60a82a4aC1aF1543f9e9eBa38fE1"
-    ).then((r) => r.json());
+
     return new ethers.Contract(
-      RinkebyUSDTContractAddress,
-      USDTAbi.result,
+      RinkebyUSDCContractAddress,
+      TestnetUSDCAuroraABI.abi,
       signer
     );
   } catch (err) {
