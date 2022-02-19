@@ -15,6 +15,7 @@ function ConnectButton() {
     history.push("/dashboard");
   }
 
+  // eslint-disable-next-line no-unused-vars
   function showUpgradingAlert() {
     toast.info(
       "We are currently undergoing a major upgrade on our platform. \n Please try again later."
