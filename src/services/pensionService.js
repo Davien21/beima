@@ -1,8 +1,7 @@
 import { formatEther, parseEther } from "@ethersproject/units";
 import { ethers } from "ethers";
-import Web3 from "web3";
 
-import { BeimaContractAddress, formatMoney } from "../utils";
+import { formatMoney } from "../utils";
 import toast from "../utils/toastConfig";
 import Emitter from "./emitter";
 import {
