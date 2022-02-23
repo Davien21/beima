@@ -4,9 +4,3 @@ It's a decentralized platform for people looking to invest in high yield protoco
 Website: https://beima.app 
 
 
-Description video on how to get started can be found on YouTube link below:
-
-https://youtu.be/YnkpDy_b8q8
-
-
-link to beima contracts: https://github.com/blockchainhubafrica/beima_app
