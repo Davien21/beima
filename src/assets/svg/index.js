@@ -15,6 +15,7 @@ import { ReactComponent as LeftArrow } from "./arrow-left.svg";
 
 import YellowCrosses from "./yellow-cross.svg";
 import airbnbLogo from "./airbnb.svg";
+import playstoreSVG from "./playstore.svg";
 import hubspotLogo from "./hubspot.svg";
 import googleLogo from "./google.svg";
 import microsoftLogo from "./microsoft.svg";
@@ -64,5 +65,6 @@ export {
   DashHistoryIcon,
   MenuIcon,
   greenCalenderSvg,
+  playstoreSVG,
   LeftArrow,
 };

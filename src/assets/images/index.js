@@ -9,6 +9,7 @@ import piechartImage from "./piechart.png";
 import formsBgImage from "./forms-bg.png";
 import profileImage from "./profile.jpg";
 import logoImage from "./logo.jpg";
+import mobileMockupImage from "./mobile-mockup.png";
 
 export {
   peopleImage,
@@ -21,4 +22,5 @@ export {
   formsBgImage,
   profileImage,
   logoImage,
+  mobileMockupImage,
 };

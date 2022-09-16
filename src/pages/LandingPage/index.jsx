@@ -1,5 +1,5 @@
 import React from "react";
-import { mapImage, peopleImage } from "../../assets/images";
+import { mapImage } from "../../assets/images";
 
 import {
   airbnbLogo,
@@ -12,12 +12,13 @@ import {
   hubspotLogo,
   microsoftLogo,
   personSvg,
+  playstoreSVG,
   securitySvg,
   trophySvg,
   YellowCrosses,
 } from "../../assets/svg";
 
-import { ConnectButton } from "../../components";
+import { Button } from "../../components";
 import styles from "./landing-page.module.css";
 
 function LandingPage(props) {
@@ -45,13 +46,20 @@ function LandingPage(props) {
                 </p>
               </div>
               <div className="mt-16 mb-10">
-                <ConnectButton />
+                {/* <ConnectButton /> */}
+                <Button className="font-medium flex gap-x-1 items-center">
+                  <span>Download on Playstore</span>
+                  <img src={playstoreSVG} alt="" />
+                </Button>
               </div>
             </div>
             <div
               className={`mt-16 pt-3 lg:mt-0 col-span-12 lg:col-span-6 2xl:col-span-7 ${styles.people_image_div}`}
             >
-              <img src={peopleImage} alt="" />
+              <img
+                src="https://res.cloudinary.com/blockchainhub-africa/image/upload/c_scale,w_861/v1663336507/Beima_Finance/mobile-mockup_ctebhj.png"
+                alt=""
+              />
               <div
                 className={`${styles.pension_earnings} hidden xl:inline-flex flex-col items-center justify-center`}
               >
