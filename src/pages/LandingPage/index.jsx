@@ -47,9 +47,17 @@ function LandingPage(props) {
               </div>
               <div className="mt-16 mb-10">
                 {/* <ConnectButton /> */}
-                <Button className="font-medium flex gap-x-1 items-center">
-                  <span>Download on Playstore</span>
-                  <img src={playstoreSVG} alt="" />
+                <Button className="font-medium">
+                  <a
+                    className="flex gap-x-1 items-center"
+                    target="_blank"
+                    without
+                    rel="noreferrer"
+                    href="https://drive.google.com/drive/folders/187u-HrrgGj6T8gBW9fK06ozvY6JZvY6W?usp=sharing"
+                  >
+                    <span>Download on Playstore</span>
+                    <img src={playstoreSVG} alt="" />
+                  </a>
                 </Button>
               </div>
             </div>
